@@ -1,0 +1,67 @@
+@startuml LaChain Indexer
+
+class Contract {
+  + id: number
+  + address: string
+  + name: string
+  + abi: object
+  + createdAt: Date
+}
+
+class Event {
+  + id: number
+  + name: string
+  + signature: string
+  + createdAt: Date
+}
+
+class EventLog {
+  + id: number
+  + blockNumber: number
+  + logIndex: number
+  + createdAt: Date
+}
+
+class EventParameter {
+  + id: number
+  + name: string
+  + type: string
+  + value: string
+  + createdAt: Date
+}
+
+class Transaction {
+  + id: number
+  + blockNumber: bigint
+  + blockHash: string
+  + hash: string
+  + type: number
+  + to: string
+  + from: string
+  + nonce: bigint
+  + gasLimit: string
+  + gasPrice: string
+  + maxPriorityFeePerGas: string
+  + maxFeePerGas: string
+  + data: string
+  + value: string
+  + chainId: string
+  + r: string
+  + s: string
+  + yParity: number
+  + createdAt: Date
+}
+
+' Relaciones entre las entidades
+
+Contract "1" --> "0..*" Event : events
+
+Event "1" --> "0..*" EventLog : eventLogs
+
+Contract "1" --> "0..*" Transaction : transactions
+
+Transaction "1" --> "0..*" EventLog : eventLogs
+
+EventLog "1" --> "0..*" EventParameter : eventParameters
+
+@enduml
