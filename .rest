@@ -100,7 +100,7 @@ Content-Type: application/json
 }
 
 ### Iniciar la escucha de eventos para un contrato (POST /contracts/listen)
-POST http://localhost:3000/contracts/listen
+POST http://localhost:3000/contracts/index
 Content-Type: application/json
 
 {

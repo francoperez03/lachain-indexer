@@ -19,54 +19,22 @@ export class BlockchainService {
     this.provider = new ethers.JsonRpcProvider(MAINNET_RPC_URL);
   }
 
-  async startListeningToContractEvents(
+  async startIndexingContractEvents(
     contractEntity: Contract,
     startBlock: number,
+    onFinish: () => Promise<void>,
   ) {
     const { address, abi } = contractEntity;
     const contract = new ethers.Contract(address, abi, this.provider);
-
     const events: Event[] =
       await this.eventService.getEventsByContractAddress(address);
+
     for (const event of events) {
       await this.processPastEvents(contract, contractEntity, event, startBlock);
     }
 
-    // for (const event of events) {
-    //   const eventName = event.name;
-
-    //   contract.on(eventName, async (...args) => {
-    //     const eventData = args[args.length - 1];
-    //     console.log({ eventData });
-    //     try {
-    //       const transaction = await this.transactionService.findByHash(
-    //         eventData.transactionHash,
-    //       );
-    //       if (!transaction) {
-    //         const tx = await this.provider.getTransaction(
-    //           eventData.transactionHash,
-    //         );
-    //         console.log({ tx });
-    //         // transaction = await this.transactionService.createTransaction(
-    //         //   tx,
-    //         //   contractEntity,
-    //         // );
-    //       }
-
-    //       await this.eventService.createEventLog(
-    //         eventData,
-    //         event,
-    //         {} as Transaction,
-    //       );
-    //     } catch (error) {
-    //       console.error('Error al procesar el evento:', error);
-    //     }
-    //   });
-    // }
-
-    console.log(
-      `Listening events from  ${address} from the block ${startBlock}`,
-    );
+    await onFinish();
+    console.log(`Indexing completed for contract at ${address}`);
   }
 
   private async processPastEvents(
@@ -101,5 +69,49 @@ export class BlockchainService {
         console.error('Error al procesar evento pasado:', error);
       }
     }
+  }
+
+  async startListeningToContractEvents(
+    contractEntity: Contract,
+    onFinish: () => Promise<void>,
+  ) {
+    const { address, abi } = contractEntity;
+    const contract = new ethers.Contract(address, abi, this.provider);
+    const events: Event[] =
+      await this.eventService.getEventsByContractAddress(address);
+
+    for (const event of events) {
+      const eventName = event.name;
+
+      contract.on(eventName, async (...args) => {
+        console.log({ args });
+        const eventData = args[args.length - 1];
+        try {
+          let transaction = await this.transactionService.findByHash(
+            eventData.transactionHash,
+          );
+          if (!transaction) {
+            const tx = await this.provider.getTransaction(
+              eventData.transactionHash,
+            );
+            transaction = await this.transactionService.createTransaction(
+              tx,
+              contractEntity,
+            );
+          }
+          await this.eventService.createEventLog(
+            eventData,
+            eventData,
+            event,
+            transaction,
+          );
+        } catch (error) {
+          console.error('Error processing live event:', error);
+        }
+      });
+    }
+
+    await onFinish();
+    console.log(`Listening to live events for contract at ${address}`);
   }
 }

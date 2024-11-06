@@ -2,7 +2,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ContractService } from './contract.service';
 import { CreateContractDto } from './dto/create-contract.dto';
-import { ListenContractEventsDto } from './dto/listen-contract-events.dto';
+import { IndexContractEventsDto } from './dto/index-contract-events.dto';
 import { AddContractAbiDto } from './dto/add-contract-abi.dto';
 
 @Controller('contracts')
@@ -29,8 +29,8 @@ export class ContractController {
     return await this.contractService.addAbiToContract(createContractDto);
   }
 
-  @Post('listen')
-  async startListening(@Body() startListeningDto: ListenContractEventsDto) {
-    return await this.contractService.startListening(startListeningDto);
+  @Post('index')
+  async startListening(@Body() indexListeningDto: IndexContractEventsDto) {
+    return await this.contractService.startIndexing(indexListeningDto);
   }
 }

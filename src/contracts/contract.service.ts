@@ -12,7 +12,7 @@ import { CreateContractDto } from './dto/create-contract.dto';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { ContractProcess, ProcessStatus } from './contract-process.entity';
 import { AddContractAbiDto } from './dto/add-contract-abi.dto';
-import { ListenContractEventsDto } from './dto/listen-contract-events.dto';
+import { IndexContractEventsDto } from './dto/index-contract-events.dto';
 
 @Injectable()
 export class ContractService {
@@ -24,6 +24,40 @@ export class ContractService {
     private eventService: EventService,
     private blockchainService: BlockchainService,
   ) {}
+
+  async onModuleInit() {
+    const processes = await this.contractProcessRepository.find({
+      where: { status: ProcessStatus.LISTENING },
+      relations: ['contract'],
+    });
+
+    for (const process of processes) {
+      const contract = process.contract;
+
+      if (!contract.abi) {
+        console.warn(`The contract ${contract.address} doesn't have ABI.`);
+        continue;
+      }
+
+      if (!process.startBlock) {
+        console.warn(`The contract ${contract.address} doesn't have ABI.`);
+        continue;
+      }
+
+      this.blockchainService.startListeningToContractEvents(
+        contract,
+        async () => {
+          const updatedProcess = await this.contractProcessRepository.findOne({
+            where: { id: process.id },
+          });
+          if (updatedProcess) {
+            updatedProcess.status = ProcessStatus.LISTENING;
+            await this.contractProcessRepository.save(updatedProcess);
+          }
+        },
+      );
+    }
+  }
 
   async findAll() {
     return await this.contractRepository
@@ -136,7 +170,7 @@ export class ContractService {
     }
 
     const process = await this.contractProcessRepository.findOne({
-      where: { contract: { id: contract.id }, status: ProcessStatus.ABI_ADDED },
+      where: { contract: { id: contract.id }, status: ProcessStatus.CREATED },
     });
 
     if (process) {
@@ -151,19 +185,52 @@ export class ContractService {
     }
   }
 
-  async startListening(createContractDto: ListenContractEventsDto) {
+  async startIndexing(createContractDto: IndexContractEventsDto) {
     const { address, startBlock } = createContractDto;
-
     const contract = await this.contractRepository.findOne({
       where: { address },
     });
-
     if (!contract) {
       throw new NotFoundException('Contract not found');
     }
+    const process = await this.contractProcessRepository.findOne({
+      where: { contract: { id: contract.id }, status: ProcessStatus.ABI_ADDED },
+    });
+    if (!process) {
+      throw new NotFoundException('Process not found for contract');
+    }
+    process.status = ProcessStatus.INDEXING;
+    await this.contractProcessRepository.save(process);
 
-    this.blockchainService.startListeningToContractEvents(contract, startBlock);
+    await this.blockchainService.startIndexingContractEvents(
+      contract,
+      startBlock,
+      async () => {
+        const updatedProcess = await this.contractProcessRepository.findOne({
+          where: {
+            contract: { id: contract.id },
+            status: ProcessStatus.INDEXING,
+          },
+        });
+        if (updatedProcess) {
+          updatedProcess.status = ProcessStatus.COMPLETED;
+          await this.contractProcessRepository.save(updatedProcess);
+        }
+      },
+    );
 
+    await this.blockchainService.startListeningToContractEvents(
+      contract,
+      async () => {
+        const updatedProcess = await this.contractProcessRepository.findOne({
+          where: { id: process.id },
+        });
+        if (updatedProcess) {
+          updatedProcess.status = ProcessStatus.LISTENING;
+          await this.contractProcessRepository.save(updatedProcess);
+        }
+      },
+    );
     return {
       message: 'Contract updated with ABI, and event listening started',
     };

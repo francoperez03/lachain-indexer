@@ -12,6 +12,7 @@ import { Contract } from './contract.entity';
 export enum ProcessStatus {
   CREATED = 'CREATED',
   ABI_ADDED = 'ABI_ADDED',
+  INDEXING = 'INDEXING',
   LISTENING = 'LISTENING',
   FAILED = 'FAILED',
   COMPLETED = 'COMPLETED',
