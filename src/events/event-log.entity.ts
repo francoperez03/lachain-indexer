@@ -1,4 +1,3 @@
-// src/events/event-log.entity.ts
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import {
   Column,
@@ -26,6 +25,18 @@ export class EventLog {
   @Field(() => Int)
   @Column()
   logIndex: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  transactionHash: string;
+
+  @Field({ nullable: true })
+  @Column({ length: 255, nullable: true })
+  signature: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  topic: string;
 
   @Field()
   @CreateDateColumn()

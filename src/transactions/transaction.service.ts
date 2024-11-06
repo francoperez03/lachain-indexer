@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from './transaction.entity';
+import { ethers } from 'ethers';
+import { Contract } from 'src/contracts/contract.entity';
 
 @Injectable()
 export class TransactionService {
@@ -29,8 +31,54 @@ export class TransactionService {
     });
   }
 
-  async create(transactionData: Partial<Transaction>): Promise<Transaction> {
-    const transaction = this.transactionRepository.create(transactionData);
-    return this.transactionRepository.save(transaction);
+  async createTransaction(
+    tx: ethers.TransactionResponse,
+    contract: Contract,
+  ): Promise<Transaction> {
+    const {
+      blockNumber,
+      blockHash = '',
+      hash,
+      type = 0,
+      to = '',
+      from = '',
+      nonce,
+      gasLimit,
+      gasPrice,
+      maxPriorityFeePerGas,
+      maxFeePerGas,
+      data,
+      value,
+      chainId,
+      signature: { r, s, yParity = 0 },
+    } = tx;
+    const existingTransaction = await this.transactionRepository.findOne({
+      where: { hash },
+    });
+    if (existingTransaction) {
+      return existingTransaction;
+    }
+    const transaction: Transaction = this.transactionRepository.create({
+      blockNumber: blockNumber,
+      blockHash,
+      hash,
+      type,
+      to,
+      from,
+      nonce: nonce,
+      gasLimit: gasLimit.toString(),
+      gasPrice: gasPrice?.toString() ?? null,
+      maxPriorityFeePerGas: maxPriorityFeePerGas?.toString() ?? null,
+      maxFeePerGas: maxFeePerGas?.toString() ?? null,
+      data,
+      value: value.toString(),
+      chainId: chainId.toString(),
+      r,
+      s,
+      yParity,
+      contract,
+    });
+    transaction.contract = contract;
+    return await this.transactionRepository.save(transaction);
   }
 }

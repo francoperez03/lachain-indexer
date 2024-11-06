@@ -68,7 +68,6 @@ export class ContractService {
       parameters: eventLog.eventParameters.map((param) => ({
         id: param.id,
         name: param.name,
-        type: param.type,
         value: param.value,
         createdAt: param.createdAt,
       })),
@@ -137,7 +136,7 @@ export class ContractService {
     }
 
     const process = await this.contractProcessRepository.findOne({
-      where: { contract: { id: contract.id }, status: ProcessStatus.CREATED },
+      where: { contract: { id: contract.id }, status: ProcessStatus.ABI_ADDED },
     });
 
     if (process) {
@@ -163,7 +162,7 @@ export class ContractService {
       throw new NotFoundException('Contract not found');
     }
 
-    this.blockchainService.startListeningToContractEvents(address, startBlock);
+    this.blockchainService.startListeningToContractEvents(contract, startBlock);
 
     return {
       message: 'Contract updated with ABI, and event listening started',

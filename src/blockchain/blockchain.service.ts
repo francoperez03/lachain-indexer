@@ -1,56 +1,105 @@
 // src/blockchain/blockchain.service.ts
 import { Injectable } from '@nestjs/common';
 import { ethers } from 'ethers';
+import { Contract } from 'src/contracts/contract.entity';
+import { EventService } from 'src/events/event.service';
+import { Event } from 'src/events/event.entity';
+// import { Transaction } from 'src/transactions/transaction.entity';
+import { TransactionService } from 'src/transactions/transaction.service';
 const MAINNET_RPC_URL = 'https://rpc1.mainnet.lachain.network';
 
 @Injectable()
 export class BlockchainService {
   private provider: ethers.JsonRpcProvider;
 
-  constructor() {
+  constructor(
+    private readonly eventService: EventService,
+    private readonly transactionService: TransactionService,
+  ) {
     this.provider = new ethers.JsonRpcProvider(MAINNET_RPC_URL);
   }
 
   async startListeningToContractEvents(
-    contractAddress: string,
+    contractEntity: Contract,
     startBlock: number,
   ) {
-    const contractEntity = {};
+    const { address, abi } = contractEntity;
+    const contract = new ethers.Contract(address, abi, this.provider);
 
-    if (!contractEntity) {
-      console.error('Contrato no encontrado en la base de datos');
-      return;
+    const events: Event[] =
+      await this.eventService.getEventsByContractAddress(address);
+    for (const event of events) {
+      await this.processPastEvents(contract, contractEntity, event, startBlock);
     }
-    console.log({ startBlock });
-    // const contract = new ethers.Contract(contractAddress, abi, this.provider);
 
-    // const events = await this.eventService.getEventsByContract(contractEntity);
-
-    // // Configurar listeners para cada evento
     // for (const event of events) {
     //   const eventName = event.name;
 
-    //   // Listener para el evento
     //   contract.on(eventName, async (...args) => {
-    //     const eventData = args[args.length - 1]; // El último argumento es el objeto Event
-
+    //     const eventData = args[args.length - 1];
+    //     console.log({ eventData });
     //     try {
-    //       // Buscar o crear la transacción usando TransactionService
-    //       let transaction = await this.transactionService.findByHash(eventData.transactionHash);
-
+    //       const transaction = await this.transactionService.findByHash(
+    //         eventData.transactionHash,
+    //       );
     //       if (!transaction) {
-    //         const tx = await this.provider.getTransaction(eventData.transactionHash);
-    //         transaction = await this.transactionService.createTransaction(tx, contractEntity);
+    //         const tx = await this.provider.getTransaction(
+    //           eventData.transactionHash,
+    //         );
+    //         console.log({ tx });
+    //         // transaction = await this.transactionService.createTransaction(
+    //         //   tx,
+    //         //   contractEntity,
+    //         // );
     //       }
 
-    //       // Crear y guardar el EventLog y sus parámetros usando EventService
-    //       await this.eventService.createEventLog(eventData, event, transaction);
+    //       await this.eventService.createEventLog(
+    //         eventData,
+    //         event,
+    //         {} as Transaction,
+    //       );
     //     } catch (error) {
     //       console.error('Error al procesar el evento:', error);
     //     }
     //   });
     // }
 
-    // console.log(`Escuchando eventos del contrato ${contractAddress} a partir del bloque ${startBlock}`);
+    console.log(
+      `Listening events from  ${address} from the block ${startBlock}`,
+    );
+  }
+
+  private async processPastEvents(
+    contract: ethers.Contract,
+    contractEntity: Contract,
+    event: Event,
+    startBlock: number,
+  ) {
+    const eventName = event.name;
+    const eventFilter = contract.filters[eventName]();
+    const logs = await contract.queryFilter(eventFilter, startBlock);
+    for (const log of logs) {
+      try {
+        const eventData = contract.interface.parseLog(log);
+        let transaction = await this.transactionService.findByHash(
+          log.transactionHash,
+        );
+        if (!transaction) {
+          const tx = await this.provider.getTransaction(log.transactionHash);
+          transaction = await this.transactionService.createTransaction(
+            tx,
+            contractEntity,
+          );
+        }
+        await this.eventService.createEventLog(
+          eventData,
+          log,
+          event,
+          transaction,
+        );
+      } catch (error) {
+        console.error('Error al procesar evento pasado:', error);
+      }
+    }
   }
 }

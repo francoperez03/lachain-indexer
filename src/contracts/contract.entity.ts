@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Event } from '../events/event.entity';
 import { Transaction } from '../transactions/transaction.entity';
+import { InterfaceAbi } from 'ethers';
 
 @ObjectType()
 @Entity('contracts')
@@ -27,7 +28,7 @@ export class Contract {
 
   @Field(() => String, { nullable: true })
   @Column('json', { nullable: true })
-  abi: object;
+  abi: InterfaceAbi;
 
   @Field()
   @CreateDateColumn()

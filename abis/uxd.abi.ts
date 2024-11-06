@@ -1,4 +1,6 @@
-export const uxdAbi = [
+import { InterfaceAbi } from 'ethers';
+
+export const uxdAbi: InterfaceAbi = [
   {
     inputs: [],
     type: 'constructor',

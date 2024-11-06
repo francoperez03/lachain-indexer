@@ -21,7 +21,7 @@ export class EventParameter {
   name: string;
 
   @Field()
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: true })
   type: string;
 
   @Field()
