@@ -3,7 +3,7 @@
   width: 100%;
   background-color: #333;
   color: #fff;
-  padding: 4px 16px; /* Menor padding para reducir la altura */
+  padding: 4px 16px;
   box-sizing: border-box;
   position: fixed;
   top: 0;
@@ -12,12 +12,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 100px; /* Altura definida para mantener el header compacto */
-}
+  height: 100px;
 
 .logo a {
   color: #fff;
-  font-size: 18px; /* Tamaño de fuente reducido */
+  font-size: 18px;
   font-weight: 500;
   text-decoration: none;
 }
