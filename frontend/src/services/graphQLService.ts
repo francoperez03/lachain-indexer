@@ -6,5 +6,8 @@ export const executeGraphQLQuery = async (query: string, variables?: object) => 
     query,
     variables,
   });
-  return response.data;
+  if (response.data.errors) {
+    throw new Error(response.data.errors[0].message);
+  }
+  return response.data.data;
 };

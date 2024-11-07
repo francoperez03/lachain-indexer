@@ -1,0 +1,45 @@
+/* Header.css */
+.app-header {
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  padding: 4px 16px; /* Menor padding para reducir la altura */
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100px; /* Altura definida para mantener el header compacto */
+}
+
+.logo a {
+  color: #fff;
+  font-size: 18px; /* Tamaño de fuente reducido */
+  font-weight: 500;
+  text-decoration: none;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+nav ul li {
+  margin-left: 12px;
+}
+
+nav a {
+  color: #bbb;
+  text-decoration: none;
+  font-size: 14px; /* Tamaño de fuente más pequeño */
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #fff;
+}

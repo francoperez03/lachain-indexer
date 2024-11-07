@@ -1,0 +1,15 @@
+.contract-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 8px;
+  border-radius: 4px;
+}
+
+.contract-card h3 {
+  margin-top: 0;
+}
+
+.contract-card a {
+  color: #007bff;
+  text-decoration: none;
+}

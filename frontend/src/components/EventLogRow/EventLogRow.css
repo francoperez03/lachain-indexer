@@ -1,0 +1,51 @@
+/* EventLogRow.css */
+.event-log-row {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background-color: #fafafa;
+  transition: box-shadow 0.2s ease;
+}
+
+.event-log-row:hover {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.event-log-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.event-log-row-header h4 {
+  margin: 0;
+  color: #333;
+}
+
+.event-log-row-header p {
+  margin: 0;
+  color: #666;
+}
+
+.event-log-row-parameters {
+  margin-top: 8px;
+}
+
+.event-log-row-parameters h5 {
+  margin: 0;
+  color: #333;
+  font-weight: 500;
+}
+
+.event-log-row-parameters ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 4px;
+}
+
+.event-log-row-parameters li {
+  color: #555;
+  font-size: 14px;
+}

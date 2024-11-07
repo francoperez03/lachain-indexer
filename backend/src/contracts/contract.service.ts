@@ -104,10 +104,10 @@ export class ContractService {
       throw new NotFoundException('Contract not found');
     }
 
-    const eventLogs =
+    const eventLogsResponse =
       await this.eventService.getEventLogsByContractAddress(address);
 
-    const eventsLogs = eventLogs.map((eventLog) => ({
+    const eventLogs = eventLogsResponse.map((eventLog) => ({
       eventid: eventLog.event.id,
       eventname: eventLog.event.name,
       signature: eventLog.event.signature,
@@ -130,7 +130,7 @@ export class ContractService {
       abi: contract.abi,
       createdAt: contract.createdAt,
       events: contract.events,
-      eventsLogs,
+      eventLogs,
       transactions: contract.transactions,
     };
   }
