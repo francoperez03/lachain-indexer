@@ -3,8 +3,8 @@ import { ContractService } from './contract.service';
 import { ContractController } from './contract.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Contract } from './contract.entity';
-import { EventsModule } from 'src/events/events.module';
-import { BlockchainModule } from 'src/blockchain/blockchain.module';
+import { EventsModule } from '../events/events.module';
+import { BlockchainModule } from '../blockchain/blockchain.module';
 import { ContractProcess } from './contract-process.entity';
 
 @Module({

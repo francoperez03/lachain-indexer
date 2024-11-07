@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { ethers } from 'ethers';
-import { Contract } from 'src/contracts/contract.entity';
+import { Contract } from '../contracts/contract.entity';
 
 @Injectable()
 export class TransactionService {
