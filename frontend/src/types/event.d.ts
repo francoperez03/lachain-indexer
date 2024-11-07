@@ -1,3 +1,9 @@
+export interface Event {
+  id: number;
+  name: string;
+  signature: string;
+}
+
 export interface EventLog {
   id: number;
   eventName: string;
@@ -5,7 +11,6 @@ export interface EventLog {
   transactionHash: string;
   parameters: EventParameter[];
   createdAt: string;
-  // Otros campos que sean necesarios
 }
 
 export interface EventParameter {

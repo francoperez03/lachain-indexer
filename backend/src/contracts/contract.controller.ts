@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ContractService } from './contract.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { IndexContractEventsDto } from './dto/index-contract-events.dto';
@@ -31,5 +31,11 @@ export class ContractController {
   @Post('index')
   async startListening(@Body() indexListeningDto: IndexContractEventsDto) {
     return await this.contractService.startIndexing(indexListeningDto);
+  }
+
+  @Delete(':address')
+  async deleteContract(@Param('address') address: string) {
+    await this.contractService.deleteContract(address);
+    return { message: 'Contract and associated data deleted successfully' };
   }
 }

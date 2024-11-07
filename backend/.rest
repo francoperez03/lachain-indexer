@@ -6,6 +6,10 @@ Accept: application/json
 GET http://localhost:3000/contracts/0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7
 Accept: application/json
 
+### Borrar un contrato por dirección
+DELETE http://localhost:3000/contracts/0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7
+Accept: application/json
+
 ### Crear un nuevo contrato (POST /contracts)
 POST http://localhost:3000/contracts
 Content-Type: application/json
