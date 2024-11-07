@@ -1,6 +1,6 @@
 // EventLogRow.tsx
 import React from 'react';
-import { EventLog } from '../../types/eventLog';
+import { EventLog } from '../../types/event';
 import './EventLogRow.css';
 
 interface EventLogRowProps {
