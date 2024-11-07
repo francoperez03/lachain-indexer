@@ -34,6 +34,9 @@ export class Event {
   contract: Contract;
 
   @Field(() => [EventLog], { nullable: true })
-  @OneToMany(() => EventLog, (eventLog) => eventLog.event)
+  @OneToMany(() => EventLog, (eventLog) => eventLog.event, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   eventLogs: EventLog[];
 }

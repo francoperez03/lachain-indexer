@@ -147,11 +147,9 @@ export class ContractService {
       );
     }
 
-    // Crear y guardar el contrato
     const contract = this.contractRepository.create({ name, address });
     const savedContract = await this.contractRepository.save(contract);
 
-    // Crear un proceso inicial
     const process = this.contractProcessRepository.create({
       contract: savedContract,
       status: ProcessStatus.CREATED,
@@ -159,6 +157,19 @@ export class ContractService {
     await this.contractProcessRepository.save(process);
 
     return savedContract;
+  }
+
+  async deleteContract(address: string): Promise<void> {
+    const contract = await this.contractRepository.findOne({
+      where: { address },
+      relations: ['events', 'events.eventLogs', 'events.eventParameters'],
+    });
+
+    if (!contract) {
+      throw new NotFoundException('Contract not found');
+    }
+
+    await this.contractRepository.remove(contract);
   }
 
   async addAbiToContract(

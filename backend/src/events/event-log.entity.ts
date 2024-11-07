@@ -51,6 +51,10 @@ export class EventLog {
   transaction: Transaction;
 
   @Field(() => [EventParameter], { nullable: true })
-  @OneToMany(() => EventParameter, (eventParameter) => eventParameter.eventLog)
+  @OneToMany(
+    () => EventParameter,
+    (eventParameter) => eventParameter.eventLog,
+    { cascade: true, onDelete: 'CASCADE' },
+  )
   eventParameters: EventParameter[];
 }

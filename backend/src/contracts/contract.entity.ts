@@ -9,6 +9,7 @@ import {
 import { Event } from '../events/event.entity';
 import { Transaction } from '../transactions/transaction.entity';
 import { InterfaceAbi } from 'ethers';
+import { ContractProcess } from './contract-process.entity';
 
 @ObjectType()
 @Entity('contracts')
@@ -34,11 +35,23 @@ export class Contract {
   createdAt: Date;
 
   @Field(() => [Event], { nullable: true })
-  @OneToMany(() => Event, (event) => event.contract)
+  @OneToMany(() => Event, (event) => event.contract, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   events: Event[];
 
   @Field(() => [Transaction], { nullable: true })
-  @OneToMany(() => Transaction, (transaction) => transaction.contract)
+  @OneToMany(() => Transaction, (transaction) => transaction.contract, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   transactions: Transaction[];
-  processes: any;
+
+  @Field(() => [ContractProcess], { nullable: true })
+  @OneToMany(() => ContractProcess, (process) => process.contract, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  processes: ContractProcess[];
 }
