@@ -44,18 +44,18 @@ export class ContractService {
         continue;
       }
 
-      this.blockchainService.startListeningToContractEvents(
-        contract,
-        async () => {
-          const updatedProcess = await this.contractProcessRepository.findOne({
-            where: { id: process.id },
-          });
-          if (updatedProcess) {
-            updatedProcess.status = ProcessStatus.LISTENING;
-            await this.contractProcessRepository.save(updatedProcess);
-          }
-        },
-      );
+      // this.blockchainService.startListeningToContractEvents(
+      //   contract,
+      //   async () => {
+      //     const updatedProcess = await this.contractProcessRepository.findOne({
+      //       where: { id: process.id },
+      //     });
+      //     if (updatedProcess) {
+      //       updatedProcess.status = ProcessStatus.LISTENING;
+      //       await this.contractProcessRepository.save(updatedProcess);
+      //     }
+      //   },
+      // );
     }
   }
 
@@ -240,7 +240,7 @@ export class ContractService {
     }
     process.status = ProcessStatus.INDEXING;
     await this.contractProcessRepository.save(process);
-
+    console.log({ address, startBlock });
     await this.blockchainService.startIndexingContractEvents(
       contract,
       startBlock,
@@ -258,18 +258,18 @@ export class ContractService {
       },
     );
 
-    await this.blockchainService.startListeningToContractEvents(
-      contract,
-      async () => {
-        const updatedProcess = await this.contractProcessRepository.findOne({
-          where: { id: process.id },
-        });
-        if (updatedProcess) {
-          updatedProcess.status = ProcessStatus.LISTENING;
-          await this.contractProcessRepository.save(updatedProcess);
-        }
-      },
-    );
+    // await this.blockchainService.startListeningToContractEvents(
+    //   contract,
+    //   async () => {
+    //     const updatedProcess = await this.contractProcessRepository.findOne({
+    //       where: { id: process.id },
+    //     });
+    //     if (updatedProcess) {
+    //       updatedProcess.status = ProcessStatus.LISTENING;
+    //       await this.contractProcessRepository.save(updatedProcess);
+    //     }
+    //   },
+    // );
     return {
       message: 'Contract updated with ABI, and event listening started',
     };

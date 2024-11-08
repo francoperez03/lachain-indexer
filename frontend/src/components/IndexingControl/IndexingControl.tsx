@@ -2,18 +2,21 @@
 import React, { useState, useEffect } from 'react';
 import { Contract, ContractProcess, ProcessStatus } from '../../types/contract';
 import { getBlockchainInfo } from '../../services/blockchainService';
+import { previewLogs } from '../../services/contractService';
 
 interface IndexingControlProps {
   contract: Contract;
   latestProcess: ContractProcess | undefined;
-  onStartIndexing: (address: string, startBlock: number) => Promise<void>;
+  onStartIndexing: (address: string, startBlock: bigint) => Promise<void>;
 }
 
 const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProcess, onStartIndexing }) => {
-  const [startBlock, setStartBlock] = useState<number>(0);
-  const [isIndexing, setIsIndexing] = useState(false);
+  const [startBlock, setStartBlock] = useState<bigint>(BigInt(0));
   const [currentBlock, setCurrentBlock] = useState<number>(0);
-
+  const [logsCount, setLogsCount] = useState<number | null>(null);
+  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [indexingLoading, setIndexingLoading] = useState<boolean>(false);
+  
   useEffect(() => {
     const fetchCurrentBlock = async () => {
       try {
@@ -28,11 +31,32 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
 
   const handleStartIndexing = async () => {
     if (startBlock > 0 && startBlock <= currentBlock) {
-      setIsIndexing(true);
+      setIndexingLoading(true);
       await onStartIndexing(contract.address, startBlock);
-      setIsIndexing(false);
+      setIndexingLoading(false);
     } else {
-      alert('Por favor, ingrese un bloque de inicio válido.');
+      console.error('Error starting indexing:');
+      setIndexingLoading(false);
+    }
+  };
+
+  const handleStartBlockChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = BigInt(e.target.value);
+    setStartBlock(value);
+    setLogsCount(null);
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+    if (value && currentBlock && value >= BigInt(0) && value <= currentBlock) {
+      const timeout = setTimeout(async () => {
+        try {
+          const logsData = await previewLogs(contract.address || '', value);
+          setLogsCount(logsData);
+        } catch (err) {
+          console.error('Error previewing logs:', err);
+        }
+      }, 2000);
+      setTypingTimeout(timeout);
     }
   };
 
@@ -40,19 +64,24 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
     <div style={{ marginTop: '20px' }}>
       <p>Bloque actual: {currentBlock}</p>
       <input
-        type="number"
         placeholder="Bloque de inicio"
-        value={startBlock}
-        onChange={(e) => setStartBlock(Number(e.target.value))}
-        disabled={isIndexing}
+        onChange={handleStartBlockChange}
+        disabled={indexingLoading}
       />
+      {logsCount !== null && (
+        <p><strong>Logs a guardar desde el bloque {startBlock.toString()}:</strong> {logsCount}</p>
+      )}
       {latestProcess && (latestProcess.status === ProcessStatus.ABI_ADDED || latestProcess.status === ProcessStatus.FAILED) && (
-        <button onClick={handleStartIndexing} disabled={isIndexing} style={{ marginLeft: '10px' }}>
-          {isIndexing ? 'Indexando...' : 'Comenzar a Indexar'}
+       <button
+          onClick={handleStartIndexing}
+          style={{ marginTop: '10px', backgroundColor: 'green', color: 'white', padding: '5px 10px' }}
+          disabled={indexingLoading}
+        >
+          {indexingLoading ? 'Indexando...' : 'Comenzar a Indexar'}
         </button>
       )}
     </div>
   );
 };
 
-export default IndexingControl;
+export default IndexingControl

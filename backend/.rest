@@ -24,11 +24,6 @@ Content-Type: application/json
 }
 
 
-### Preview Indexing
-
-GET http://localhost:3000/contracts/index/preview/0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7?startBlock=10105004
-
-
 ### Agregar ABI al contrato y crear eventos (POST /contracts/add-abi)
 POST http://localhost:3000/contracts/add-abi
 Content-Type: application/json
@@ -119,6 +114,10 @@ Content-Type: application/json
 
 {
   "address": "0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7",
-  "startBlock": 10995000
+  "startBlock": 11058113
 }
+
+### Preview Indexing
+
+GET http://localhost:3000/contracts/index/preview/0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7?startBlock=11058113
 
