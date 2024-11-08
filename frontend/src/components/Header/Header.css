@@ -1,44 +1,83 @@
 /* Header.css */
+
 .app-header {
   width: 100%;
-  background-color: #333;
-  color: #fff;
-  padding: 4px 16px;
-  box-sizing: border-box;
+  background-color: #0C0C0B; /* Fondo negro */
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
+  padding: 8px 0;
+  border: 0;
+}
+
+.header-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 100px;
-}
-.logo a {
-  color: #fff;
-  font-size: 18px;
-  font-weight: 500;
-  text-decoration: none;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+  color: #51FF00;
 }
 
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.logo {
   display: flex;
-}
-
-nav ul li {
-  margin-left: 12px;
-}
-
-nav a {
-  color: #bbb;
+  align-items: center;
+  gap: 8px;
+  color: #51FF00;
   text-decoration: none;
-  font-size: 14px; /* Tamaño de fuente más pequeño */
+  padding: 0px;
+}
+
+.logo-image {
+  height: 40px;
+  width: auto;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Empuja los enlaces y el ícono de GitHub hacia la derecha */
+.nav-links {
+  display: flex;
+  gap: 16px;
+  margin-left: auto; /* Empuja nav-links hacia la derecha */
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0px 16px;
+  color: #51FF00;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 8px;
+}
+
+.nav-link:hover {
+  background-color: rgba(81, 255, 0, 0.1); /* Fondo al pasar el mouse */
+}
+
+.nav-link.active {
+  background-color: rgba(81, 255, 0, 0.2); /* Fondo para la ruta activa */
+  color: #51FF00;
+}
+
+.github-link {
+  color: #51FF00;
+  text-decoration: none;
   transition: color 0.3s ease;
 }
 
-nav a:hover {
-  color: #fff;
+.github-link:hover {
+  color: #5fff15;
+}
+
+.icon {
+  height: 20px;
+  padding-right: 13px;
+  width: 20px;
 }
