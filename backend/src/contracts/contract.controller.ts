@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ContractService } from './contract.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { IndexContractEventsDto } from './dto/index-contract-events.dto';
@@ -16,6 +25,19 @@ export class ContractController {
   @Get(':address')
   async findByAddress(@Param('address') address: string) {
     return await this.contractService.findByAddress(address);
+  }
+
+  @Get('index/preview/:address')
+  async previewIndexing(
+    @Param('address') address: string,
+    @Query('startBlock') startBlock: string,
+  ) {
+    const blockNumber = parseInt(startBlock);
+    if (isNaN(blockNumber)) {
+      throw new BadRequestException('Invalid start block number');
+    }
+
+    return await this.contractService.previewIndexing(address, blockNumber);
   }
 
   @Post()

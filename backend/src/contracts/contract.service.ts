@@ -29,7 +29,6 @@ export class ContractService {
       where: { status: ProcessStatus.COMPLETED },
       relations: ['contract'],
     });
-    console.log({ processes });
     for (const process of processes) {
       const contract = process.contract;
 
@@ -82,6 +81,10 @@ export class ContractService {
       .loadRelationCountAndMap(
         'contract.transactionsCount',
         'contract.transactions',
+      )
+      .loadRelationCountAndMap(
+        'contract.eventLogsCount',
+        'contract.events.eventLogs',
       )
       .select([
         'contract.id',
@@ -169,6 +172,7 @@ export class ContractService {
           'events',
           'events.eventLogs',
           'events.eventLogs.eventParameters',
+          'transactions',
           'processes',
         ],
       });
@@ -201,7 +205,6 @@ export class ContractService {
       if (item.type === 'event') {
         const inputs = item.inputs.map((input) => input.type).join(',');
         const signature = `${item.name}(${inputs})`;
-        console.log({ signature });
         await this.eventService.createEvent(item.name, signature, contract);
       }
     }
@@ -270,5 +273,29 @@ export class ContractService {
     return {
       message: 'Contract updated with ABI, and event listening started',
     };
+  }
+
+  async previewIndexing(address: string, startBlock: number): Promise<number> {
+    const contractEntity = await this.contractRepository.findOne({
+      where: { address },
+      relations: ['events'],
+    });
+
+    if (!contractEntity) {
+      throw new NotFoundException('Contract not found');
+    }
+
+    let totalLogs = 0;
+
+    for (const event of contractEntity.events) {
+      const logsCount = await this.blockchainService.countPastEventLogs(
+        contractEntity,
+        event,
+        startBlock,
+      );
+      totalLogs += logsCount;
+    }
+
+    return totalLogs;
   }
 }

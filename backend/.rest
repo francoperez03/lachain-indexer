@@ -2,6 +2,10 @@
 GET http://localhost:3000/contracts
 Accept: application/json
 
+### Obtener todos los contratos
+GET http://localhost:3000/blockchain/info
+Accept: application/json
+
 ### Obtener un contrato por dirección
 GET http://localhost:3000/contracts/0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7
 Accept: application/json
@@ -18,6 +22,12 @@ Content-Type: application/json
   "name": "UXD Contract",
   "address": "0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7"
 }
+
+
+### Preview Indexing
+
+GET http://localhost:3000/contracts/index/preview/0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7?startBlock=10105004
+
 
 ### Agregar ABI al contrato y crear eventos (POST /contracts/add-abi)
 POST http://localhost:3000/contracts/add-abi

@@ -82,7 +82,6 @@ export class BlockchainService {
       const eventName = event.name;
 
       contract.on(eventName, async (...args) => {
-        console.log({ args });
         const eventData = args[args.length - 1];
         try {
           const transaction = await this.transactionService.findByHash(
@@ -111,5 +110,36 @@ export class BlockchainService {
 
     await onFinish();
     console.log(`Listening to live events for contract at ${address}`);
+  }
+
+  async countPastEventLogs(
+    contractEntity: Contract,
+    event: Event,
+    startBlock: number,
+  ): Promise<number> {
+    const contract = new ethers.Contract(
+      contractEntity.address,
+      contractEntity.abi,
+      this.provider,
+    );
+
+    const eventFilter = contract.filters[event.name]();
+    const logs = await contract.queryFilter(eventFilter, startBlock);
+
+    return logs.length;
+  }
+
+  async getBlockchainInfo() {
+    const blockNumber = await this.provider.getBlockNumber();
+    const network = await this.provider.getNetwork();
+
+    return {
+      blockNumber: blockNumber.toString(),
+      network: {
+        name: network.name,
+        chainId: network.chainId.toString(),
+      },
+      rpcUrl: MAINNET_RPC_URL,
+    };
   }
 }
