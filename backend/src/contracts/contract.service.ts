@@ -85,6 +85,7 @@ export class ContractService {
       .loadRelationCountAndMap(
         'contract.eventLogsCount',
         'contract.events.eventLogs',
+        'eventLogs',
       )
       .select([
         'contract.id',
