@@ -14,7 +14,7 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
   const [startBlock, setStartBlock] = useState<bigint>(BigInt(0));
   const [currentBlock, setCurrentBlock] = useState<number>(0);
   const [logsCount, setLogsCount] = useState<number | null>(null);
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout>  | null>(null);
   const [indexingLoading, setIndexingLoading] = useState<boolean>(false);
   
   useEffect(() => {
