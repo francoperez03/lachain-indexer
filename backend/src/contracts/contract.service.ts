@@ -160,16 +160,24 @@ export class ContractService {
   }
 
   async deleteContract(address: string): Promise<void> {
-    const contract = await this.contractRepository.findOne({
-      where: { address },
-      relations: ['events', 'events.eventLogs', 'events.eventParameters'],
-    });
-
-    if (!contract) {
-      throw new NotFoundException('Contract not found');
+    try {
+      const contract = await this.contractRepository.findOne({
+        where: { address },
+        relations: [
+          'events',
+          'events.eventLogs',
+          'events.eventLogs.eventParameters',
+          'processes',
+        ],
+      });
+      if (!contract) {
+        throw new NotFoundException('Contract not found');
+      }
+      await this.contractRepository.remove(contract);
+    } catch (error) {
+      console.error('Error deleting contract:', error);
+      throw new Error('Failed to delete contract. Please try again later.');
     }
-
-    await this.contractRepository.remove(contract);
   }
 
   async addAbiToContract(

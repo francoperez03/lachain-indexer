@@ -22,7 +22,9 @@ export class ContractProcess {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Contract, (contract) => contract.processes)
+  @ManyToOne(() => Contract, (contract) => contract.processes, {
+    onDelete: 'CASCADE',
+  })
   contract: Contract;
 
   @Column({
