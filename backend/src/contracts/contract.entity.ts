@@ -48,7 +48,6 @@ export class Contract {
   })
   transactions: Transaction[];
 
-  @Field(() => [ContractProcess], { nullable: true })
   @OneToMany(() => ContractProcess, (process) => process.contract, {
     cascade: true,
     onDelete: 'CASCADE',
