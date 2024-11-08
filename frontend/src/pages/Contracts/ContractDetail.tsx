@@ -12,7 +12,7 @@ const ContractDetail: React.FC = () => {
   const [contract, setContract] = useState<Contract | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [deletionError, setDeletionError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,15 +33,15 @@ const ContractDetail: React.FC = () => {
     fetchContract();
   }, [address]);
 
-  const handleDelete = async () => {
+const handleDelete = async () => {
     try {
       if (address) {
         await deleteContractByAddress(address);
-        navigate('/contracts'); // Redirige a la lista de contratos después de eliminar
+        navigate('/contracts');
       }
-    } catch (err) {
-      console.error(err);
-      setDeletionError('Error al eliminar el contrato.');
+    } catch (error) {
+      console.error('Error deleting contract:', error);
+      setDeleteError('Failed to delete contract. Please try again later.');
     }
   };
 
@@ -62,7 +62,7 @@ const ContractDetail: React.FC = () => {
       <button onClick={handleDelete} style={{ marginTop: '10px', backgroundColor: 'red', color: 'white', padding: '5px 10px' }}>
         Eliminar Contrato
       </button>
-      {deletionError && <p style={{ color: 'red' }}>{deletionError}</p>}
+      {deleteError && <p style={{ color: 'red' }}>{deleteError}</p>}
 
       <nav style={{ marginTop: '20px' }}>
         <ul>
