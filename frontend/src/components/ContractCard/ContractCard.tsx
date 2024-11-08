@@ -1,23 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './ContractCard.css'; // Opcional: si estás usando CSS Modules o similar
-import { Contract } from '../../types/contract';
+import './ContractCard.css';
+import { ContractItem } from '../../types/contract';
 
 interface ContractCardProps {
-  contract: Contract;
+  contract: ContractItem;
 }
 
 const ContractCard: React.FC<ContractCardProps> = ({ contract }) => {
+  const [iconSrc, setIconSrc] = useState<string | null>(null);
+  useEffect(() => {
+    const loadIcon = async () => {
+      try {
+        const icon = await import(`../../assets/images/${contract.address}_icon.webp`);
+        setIconSrc(icon.default);
+      } catch (error) {
+        console.warn(`Icono no encontrado para ${contract.address}, usando icono por defecto. Error:`,{error});
+        const defaultIcon = await import('../../assets/images/default_icon.webp');
+        setIconSrc(defaultIcon.default);
+      }
+    };
+
+    loadIcon();
+  }, [contract.address]);
   return (
     <div className="contract-card">
-      <h3>{contract.name}</h3>
-      <p>
-        <strong>Dirección:</strong> {contract.address}
+      <div className="contract-card-icon">
+        {iconSrc && <img src={iconSrc} alt={`${contract.name} Icon`} className="contract-icon" />}
+      </div>
+      <h3 className="contract-card-name">{contract.name}</h3>
+      <p className="contract-card-address">
+        {`${contract.address.slice(0, 5)}...${contract.address.slice(-3)}`}
       </p>
-      <p>
-        <strong>Creado en:</strong> {new Date(contract.createdAt).toLocaleString()}
-      </p>
-      <Link to={`/contracts/${contract.address}`}>Ver Detalles</Link>
+      <div className="contract-card-stats">
+        <p className="contract-card-stat">
+          <span>eventos</span> {contract.eventLogsCount}
+        </p>
+        <p className="contract-card-stat">
+          <span>transacciones</span> {contract.transactionsCount}
+        </p>
+      </div>
+      <Link to={`/contracts/${contract.address}`} className="contract-card-details">
+        Ver Detalles
+      </Link>
     </div>
   );
 };

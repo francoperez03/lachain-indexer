@@ -1,9 +1,9 @@
 import apiClient from './apiClient';
-import { Contract } from '../types/contract';
+import { Contract, ContractItem } from '../types/contract';
 import { EventLog } from '../types/event';
 
-export const getContracts = async (): Promise<Contract[]> => {
-  const response = await apiClient.get<Contract[]>('/contracts');
+export const getContracts = async (): Promise<ContractItem[]> => {
+  const response = await apiClient.get<ContractItem[]>('/contracts');
   return response.data;
 };
 

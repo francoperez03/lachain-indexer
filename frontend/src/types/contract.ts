@@ -22,6 +22,17 @@ export interface Contract {
   createdAt: string;
 }
 
+export interface ContractItem {
+  id: number;
+  address: string;
+  createdAt: string;
+  name: string;
+  eventLogsCount: number;
+  eventsCount: number;
+  transactionsCount: number;
+  icon?: string
+}
+
 export interface ContractProcess {
   id: string
   status: ProcessStatus
