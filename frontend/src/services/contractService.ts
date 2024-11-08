@@ -37,3 +37,14 @@ export const getEventLogsByContractAddress = async (
 export const deleteContractByAddress = async (address: string): Promise<void> => {
   await apiClient.delete(`/contracts/${address}`);
 };  
+
+export const startIndexing = async (address: string): Promise<void> => {
+  await apiClient.post(`/contracts/index`, { address });
+};
+
+export const previewLogs = async (address: string, startBlock: bigint) => {
+  const response = await apiClient.get(`/contracts/index/preview/${address}`, {
+    params: { startBlock },
+  });
+  return response.data;
+};  

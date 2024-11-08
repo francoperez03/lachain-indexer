@@ -35,9 +35,6 @@ export class ContractProcess {
   status: ProcessStatus;
 
   @Column({ nullable: true })
-  abi: string;
-
-  @Column({ nullable: true })
   startBlock: number;
 
   @CreateDateColumn()

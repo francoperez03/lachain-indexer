@@ -27,9 +27,11 @@ export class BlockchainService {
     const events: Event[] =
       await this.eventService.getEventsByContractAddress(address);
 
-    for (const event of events) {
-      await this.processPastEvents(contract, contractEntity, event, startBlock);
-    }
+    await Promise.all(
+      events.map((event) =>
+        this.processPastEvents(contract, contractEntity, event, startBlock),
+      ),
+    );
 
     await onFinish();
     console.log(`Indexing completed for contract at ${address}`);
@@ -44,29 +46,34 @@ export class BlockchainService {
     const eventName = event.name;
     const eventFilter = contract.filters[eventName]();
     const logs = await contract.queryFilter(eventFilter, startBlock);
-    for (const log of logs) {
-      try {
-        const eventData = contract.interface.parseLog(log);
-        let transaction = await this.transactionService.findByHash(
-          log.transactionHash,
-        );
-        if (!transaction) {
-          const tx = await this.provider.getTransaction(log.transactionHash);
-          transaction = await this.transactionService.createTransaction(
-            tx,
-            contractEntity,
+
+    await Promise.all(
+      logs.map(async (log) => {
+        try {
+          const eventData = contract.interface.parseLog(log);
+          let transaction = await this.transactionService.findByHash(
+            log.transactionHash,
           );
+
+          if (!transaction) {
+            const tx = await this.provider.getTransaction(log.transactionHash);
+            transaction = await this.transactionService.createTransaction(
+              tx,
+              contractEntity,
+            );
+          }
+
+          await this.eventService.createEventLog(
+            eventData,
+            log,
+            event,
+            transaction,
+          );
+        } catch (error) {
+          console.error('Error al procesar evento pasado:', error);
         }
-        await this.eventService.createEventLog(
-          eventData,
-          log,
-          event,
-          transaction,
-        );
-      } catch (error) {
-        console.error('Error al procesar evento pasado:', error);
-      }
-    }
+      }),
+    );
   }
 
   async startListeningToContractEvents(
@@ -82,27 +89,26 @@ export class BlockchainService {
       const eventName = event.name;
 
       contract.on(eventName, async (...args) => {
-        console.log({ args });
         const eventData = args[args.length - 1];
         try {
-          let transaction = await this.transactionService.findByHash(
+          const transaction = await this.transactionService.findByHash(
             eventData.transactionHash,
           );
           if (!transaction) {
-            const tx = await this.provider.getTransaction(
-              eventData.transactionHash,
-            );
-            transaction = await this.transactionService.createTransaction(
-              tx,
-              contractEntity,
-            );
+            // const tx = await this.provider.getTransaction(
+            //   eventData.transactionHash,
+            // );
+            // transaction = await this.transactionService.createTransaction(
+            //   tx,
+            //   contractEntity,
+            // );
           }
-          await this.eventService.createEventLog(
-            eventData,
-            eventData,
-            event,
-            transaction,
-          );
+          // await this.eventService.createEventLog(
+          //   eventData,
+          //   eventData,
+          //   event,
+          //   transaction,
+          // );
         } catch (error) {
           console.error('Error processing live event:', error);
         }
@@ -111,5 +117,36 @@ export class BlockchainService {
 
     await onFinish();
     console.log(`Listening to live events for contract at ${address}`);
+  }
+
+  async countPastEventLogs(
+    contractEntity: Contract,
+    event: Event,
+    startBlock: number,
+  ): Promise<number> {
+    const contract = new ethers.Contract(
+      contractEntity.address,
+      contractEntity.abi,
+      this.provider,
+    );
+
+    const eventFilter = contract.filters[event.name]();
+    const logs = await contract.queryFilter(eventFilter, startBlock);
+
+    return logs.length;
+  }
+
+  async getBlockchainInfo() {
+    const blockNumber = await this.provider.getBlockNumber();
+    const network = await this.provider.getNetwork();
+
+    return {
+      blockNumber: blockNumber.toString(),
+      network: {
+        name: network.name,
+        chainId: network.chainId.toString(),
+      },
+      rpcUrl: MAINNET_RPC_URL,
+    };
   }
 }

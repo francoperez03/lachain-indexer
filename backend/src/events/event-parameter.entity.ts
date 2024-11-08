@@ -32,6 +32,8 @@ export class EventParameter {
   createdAt: Date;
 
   @Field(() => EventLog)
-  @ManyToOne(() => EventLog, (eventLog) => eventLog.eventParameters)
+  @ManyToOne(() => EventLog, (eventLog) => eventLog.eventParameters, {
+    onDelete: 'CASCADE',
+  })
   eventLog: EventLog;
 }

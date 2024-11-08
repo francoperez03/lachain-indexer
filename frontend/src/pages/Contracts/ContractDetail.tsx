@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate, Routes, Route } from 'react-router-dom';
-import { getContractByAddress, deleteContractByAddress } from '../../services/contractService';
-import { Contract } from '../../types/contract';
-import GraphQLTab from './GraphQLTab';
-import EventLogsTab from './EventLogsTab';
-import AbiAndEventsTab from './AbiAndEventsTab';
-import TransactionsTab from './TransactionTab';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getContractByAddress, deleteContractByAddress, startIndexing } from '../../services/contractService';
+import { Contract, ContractProcess } from '../../types/contract';
+import ContractTabs from './ContractTabs';
+import ContractHeader from '../../components/ContractHeader/ContractHeader';
+import IndexingControl from '../../components/IndexingControl/IndexingControl';
 
 const ContractDetail: React.FC = () => {
   const { address } = useParams<{ address: string }>();
   const [contract, setContract] = useState<Contract | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,65 +27,26 @@ const ContractDetail: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchContract();
   }, [address]);
 
-const handleDelete = async () => {
-    try {
-      if (address) {
-        await deleteContractByAddress(address);
-        navigate('/contracts');
-      }
-    } catch (error) {
-      console.error('Error deleting contract:', error);
-      setDeleteError('Failed to delete contract. Please try again later.');
+  const handleDelete = async () => {
+    if (address) {
+      await deleteContractByAddress(address);
+      navigate('/contracts');
     }
   };
 
   if (loading) return <p>Cargando detalles del contrato...</p>;
-  if (error) return <p>{error}</p>;
+  if (error || !contract) return <p>{error || 'Contrato no encontrado.'}</p>;
 
-  if (!contract) return <p>Contrato no encontrado.</p>;
+  const latestProcess: ContractProcess | undefined = contract.processes?.[contract.processes.length - 1];
 
   return (
     <div>
-      <h2>Detalle del Contrato</h2>
-      <p>
-        <strong>Nombre:</strong> {contract.name}
-      </p>
-      <p>
-        <strong>Dirección:</strong> {contract.address}
-      </p>
-      <button onClick={handleDelete} style={{ marginTop: '10px', backgroundColor: 'red', color: 'white', padding: '5px 10px' }}>
-        Eliminar Contrato
-      </button>
-      {deleteError && <p style={{ color: 'red' }}>{deleteError}</p>}
-
-      <nav style={{ marginTop: '20px' }}>
-        <ul>
-          <li>
-            <Link to={`/contracts/${address}/graphql`}>Consulta GraphQL</Link>
-          </li>
-          <li>
-            <Link to={`/contracts/${address}/event-logs`}>Event Logs</Link>
-          </li>
-          <li>
-            <Link to={`/contracts/${address}/abi-events`}>ABI y Eventos</Link>
-          </li>
-          <li>
-            <Link to={`/contracts/${address}/transactions`}>Transacciones</Link>
-          </li>
-        </ul>
-      </nav>
-
-      <Routes>
-        <Route path="graphql" element={<GraphQLTab contract={contract} />} />
-        <Route path="event-logs" element={<EventLogsTab contract={contract} />} />
-        <Route path="abi-events" element={<AbiAndEventsTab contract={contract} />} />
-        <Route path="transactions" element={<TransactionsTab transactions={contract.transactions || []} />} />
-        <Route path="*" element={<GraphQLTab contract={contract} />} />
-      </Routes>
+      <ContractHeader contract={contract} onDelete={handleDelete} />
+      <IndexingControl contract={contract} latestProcess={latestProcess} onStartIndexing={startIndexing} />
+      <ContractTabs contract={contract} />
     </div>
   );
 };

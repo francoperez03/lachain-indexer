@@ -29,7 +29,6 @@ export class ContractService {
       where: { status: ProcessStatus.COMPLETED },
       relations: ['contract'],
     });
-    console.log({ processes });
     for (const process of processes) {
       const contract = process.contract;
 
@@ -45,18 +44,18 @@ export class ContractService {
         continue;
       }
 
-      this.blockchainService.startListeningToContractEvents(
-        contract,
-        async () => {
-          const updatedProcess = await this.contractProcessRepository.findOne({
-            where: { id: process.id },
-          });
-          if (updatedProcess) {
-            updatedProcess.status = ProcessStatus.LISTENING;
-            await this.contractProcessRepository.save(updatedProcess);
-          }
-        },
-      );
+      // this.blockchainService.startListeningToContractEvents(
+      //   contract,
+      //   async () => {
+      //     const updatedProcess = await this.contractProcessRepository.findOne({
+      //       where: { id: process.id },
+      //     });
+      //     if (updatedProcess) {
+      //       updatedProcess.status = ProcessStatus.LISTENING;
+      //       await this.contractProcessRepository.save(updatedProcess);
+      //     }
+      //   },
+      // );
     }
   }
 
@@ -83,6 +82,10 @@ export class ContractService {
         'contract.transactionsCount',
         'contract.transactions',
       )
+      .loadRelationCountAndMap(
+        'contract.eventLogsCount',
+        'contract.events.eventLogs',
+      )
       .select([
         'contract.id',
         'contract.address',
@@ -97,6 +100,7 @@ export class ContractService {
       .createQueryBuilder('contract')
       .leftJoinAndSelect('contract.transactions', 'transaction')
       .leftJoinAndSelect('contract.events', 'event')
+      .leftJoinAndSelect('contract.processes', 'processes')
       .where('contract.address = :address', { address })
       .getOne();
 
@@ -109,11 +113,12 @@ export class ContractService {
 
     const eventLogs = eventLogsResponse.map((eventLog) => ({
       eventid: eventLog.event.id,
-      eventname: eventLog.event.name,
+      eventName: eventLog.event.name,
       signature: eventLog.event.signature,
       id: eventLog.id,
       blockNumber: eventLog.blockNumber,
       logIndex: eventLog.logIndex,
+      transactionHash: eventLog.transactionHash,
       createdAt: eventLog.createdAt,
       parameters: eventLog.eventParameters.map((param) => ({
         id: param.id,
@@ -132,6 +137,7 @@ export class ContractService {
       events: contract.events,
       eventLogs,
       transactions: contract.transactions,
+      processes: contract.processes,
     };
   }
 
@@ -167,9 +173,11 @@ export class ContractService {
           'events',
           'events.eventLogs',
           'events.eventLogs.eventParameters',
+          'transactions',
           'processes',
         ],
       });
+      console.log({ contract });
       if (!contract) {
         throw new NotFoundException('Contract not found');
       }
@@ -199,7 +207,6 @@ export class ContractService {
       if (item.type === 'event') {
         const inputs = item.inputs.map((input) => input.type).join(',');
         const signature = `${item.name}(${inputs})`;
-        console.log({ signature });
         await this.eventService.createEvent(item.name, signature, contract);
       }
     }
@@ -210,7 +217,6 @@ export class ContractService {
 
     if (process) {
       process.status = ProcessStatus.ABI_ADDED;
-      process.abi = JSON.stringify(abi);
       await this.contractProcessRepository.save(process);
       return process;
     } else {
@@ -236,7 +242,7 @@ export class ContractService {
     }
     process.status = ProcessStatus.INDEXING;
     await this.contractProcessRepository.save(process);
-
+    console.log({ address, startBlock });
     await this.blockchainService.startIndexingContractEvents(
       contract,
       startBlock,
@@ -254,20 +260,44 @@ export class ContractService {
       },
     );
 
-    await this.blockchainService.startListeningToContractEvents(
-      contract,
-      async () => {
-        const updatedProcess = await this.contractProcessRepository.findOne({
-          where: { id: process.id },
-        });
-        if (updatedProcess) {
-          updatedProcess.status = ProcessStatus.LISTENING;
-          await this.contractProcessRepository.save(updatedProcess);
-        }
-      },
-    );
+    // await this.blockchainService.startListeningToContractEvents(
+    //   contract,
+    //   async () => {
+    //     const updatedProcess = await this.contractProcessRepository.findOne({
+    //       where: { id: process.id },
+    //     });
+    //     if (updatedProcess) {
+    //       updatedProcess.status = ProcessStatus.LISTENING;
+    //       await this.contractProcessRepository.save(updatedProcess);
+    //     }
+    //   },
+    // );
     return {
       message: 'Contract updated with ABI, and event listening started',
     };
+  }
+
+  async previewIndexing(address: string, startBlock: number): Promise<number> {
+    const contractEntity = await this.contractRepository.findOne({
+      where: { address },
+      relations: ['events'],
+    });
+
+    if (!contractEntity) {
+      throw new NotFoundException('Contract not found');
+    }
+
+    let totalLogs = 0;
+
+    for (const event of contractEntity.events) {
+      const logsCount = await this.blockchainService.countPastEventLogs(
+        contractEntity,
+        event,
+        startBlock,
+      );
+      totalLogs += logsCount;
+    }
+
+    return totalLogs;
   }
 }
