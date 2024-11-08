@@ -97,6 +97,7 @@ export class ContractService {
       .createQueryBuilder('contract')
       .leftJoinAndSelect('contract.transactions', 'transaction')
       .leftJoinAndSelect('contract.events', 'event')
+      .leftJoinAndSelect('contract.processes', 'processes')
       .where('contract.address = :address', { address })
       .getOne();
 
@@ -132,6 +133,7 @@ export class ContractService {
       events: contract.events,
       eventLogs,
       transactions: contract.transactions,
+      processes: contract.processes,
     };
   }
 
@@ -210,7 +212,6 @@ export class ContractService {
 
     if (process) {
       process.status = ProcessStatus.ABI_ADDED;
-      process.abi = JSON.stringify(abi);
       await this.contractProcessRepository.save(process);
       return process;
     } else {

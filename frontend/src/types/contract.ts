@@ -1,5 +1,15 @@
 import { EventLog, Event } from "./event";
 import { Transaction } from "./transaction";
+
+export enum ProcessStatus {
+  CREATED = 'CREATED',
+  ABI_ADDED = 'ABI_ADDED',
+  INDEXING = 'INDEXING',
+  LISTENING = 'LISTENING',
+  FAILED = 'FAILED',
+  COMPLETED = 'COMPLETED',
+}
+
 export interface Contract {
   id: number;
   address: string;
@@ -14,5 +24,7 @@ export interface Contract {
 
 export interface ContractProcess {
   id: string
-  status: string
+  status: ProcessStatus
 }
+
+
