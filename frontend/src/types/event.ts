@@ -7,6 +7,7 @@ export interface Event {
 export interface EventLog {
   id: number;
   eventName: string;
+  signature: string;
   blockNumber: number;
   transactionHash: string;
   parameters: EventParameter[];

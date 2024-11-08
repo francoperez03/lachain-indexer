@@ -90,10 +90,14 @@ export class Transaction {
   createdAt: Date;
 
   @Field(() => Contract)
-  @ManyToOne(() => Contract, (contract) => contract.transactions)
+  @ManyToOne(() => Contract, (contract) => contract.transactions, {
+    onDelete: 'CASCADE',
+  })
   contract: Contract;
 
   @Field(() => [EventLog], { nullable: true })
-  @OneToMany(() => EventLog, (eventLog) => eventLog.transaction)
+  @OneToMany(() => EventLog, (eventLog) => eventLog.transaction, {
+    onDelete: 'CASCADE',
+  })
   eventLogs: EventLog[];
 }

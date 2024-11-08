@@ -30,7 +30,9 @@ export class Event {
   createdAt: Date;
 
   @Field(() => Contract)
-  @ManyToOne(() => Contract, (contract) => contract.events)
+  @ManyToOne(() => Contract, (contract) => contract.events, {
+    onDelete: 'CASCADE',
+  })
   contract: Contract;
 
   @Field(() => [EventLog], { nullable: true })

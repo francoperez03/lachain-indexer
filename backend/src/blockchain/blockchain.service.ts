@@ -27,9 +27,11 @@ export class BlockchainService {
     const events: Event[] =
       await this.eventService.getEventsByContractAddress(address);
 
-    for (const event of events) {
-      await this.processPastEvents(contract, contractEntity, event, startBlock);
-    }
+    await Promise.all(
+      events.map((event) =>
+        this.processPastEvents(contract, contractEntity, event, startBlock),
+      ),
+    );
 
     await onFinish();
     console.log(`Indexing completed for contract at ${address}`);
@@ -44,29 +46,34 @@ export class BlockchainService {
     const eventName = event.name;
     const eventFilter = contract.filters[eventName]();
     const logs = await contract.queryFilter(eventFilter, startBlock);
-    for (const log of logs) {
-      try {
-        const eventData = contract.interface.parseLog(log);
-        let transaction = await this.transactionService.findByHash(
-          log.transactionHash,
-        );
-        if (!transaction) {
-          const tx = await this.provider.getTransaction(log.transactionHash);
-          transaction = await this.transactionService.createTransaction(
-            tx,
-            contractEntity,
+
+    await Promise.all(
+      logs.map(async (log) => {
+        try {
+          const eventData = contract.interface.parseLog(log);
+          let transaction = await this.transactionService.findByHash(
+            log.transactionHash,
           );
+
+          if (!transaction) {
+            const tx = await this.provider.getTransaction(log.transactionHash);
+            transaction = await this.transactionService.createTransaction(
+              tx,
+              contractEntity,
+            );
+          }
+
+          await this.eventService.createEventLog(
+            eventData,
+            log,
+            event,
+            transaction,
+          );
+        } catch (error) {
+          console.error('Error al procesar evento pasado:', error);
         }
-        await this.eventService.createEventLog(
-          eventData,
-          log,
-          event,
-          transaction,
-        );
-      } catch (error) {
-        console.error('Error al procesar evento pasado:', error);
-      }
-    }
+      }),
+    );
   }
 
   async startListeningToContractEvents(

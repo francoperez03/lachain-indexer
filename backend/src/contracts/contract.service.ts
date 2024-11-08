@@ -113,11 +113,12 @@ export class ContractService {
 
     const eventLogs = eventLogsResponse.map((eventLog) => ({
       eventid: eventLog.event.id,
-      eventname: eventLog.event.name,
+      eventName: eventLog.event.name,
       signature: eventLog.event.signature,
       id: eventLog.id,
       blockNumber: eventLog.blockNumber,
       logIndex: eventLog.logIndex,
+      transactionHash: eventLog.transactionHash,
       createdAt: eventLog.createdAt,
       parameters: eventLog.eventParameters.map((param) => ({
         id: param.id,
@@ -176,6 +177,7 @@ export class ContractService {
           'processes',
         ],
       });
+      console.log({ contract });
       if (!contract) {
         throw new NotFoundException('Contract not found');
       }

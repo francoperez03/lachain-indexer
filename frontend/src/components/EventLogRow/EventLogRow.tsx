@@ -11,7 +11,7 @@ const EventLogRow: React.FC<EventLogRowProps> = ({ log }) => {
   return (
     <div className="event-log-row">
       <div className="event-log-row-header">
-        <h4>{log.eventName}</h4>
+        <h4>{log.signature}</h4>
         <p><strong>Block:</strong> {log.blockNumber}</p>
         <p><strong>Tx Hash:</strong> {log.transactionHash}</p>
       </div>
