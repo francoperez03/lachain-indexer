@@ -85,24 +85,24 @@ export class BlockchainService {
         console.log({ args });
         const eventData = args[args.length - 1];
         try {
-          let transaction = await this.transactionService.findByHash(
+          const transaction = await this.transactionService.findByHash(
             eventData.transactionHash,
           );
           if (!transaction) {
-            const tx = await this.provider.getTransaction(
-              eventData.transactionHash,
-            );
-            transaction = await this.transactionService.createTransaction(
-              tx,
-              contractEntity,
-            );
+            // const tx = await this.provider.getTransaction(
+            //   eventData.transactionHash,
+            // );
+            // transaction = await this.transactionService.createTransaction(
+            //   tx,
+            //   contractEntity,
+            // );
           }
-          await this.eventService.createEventLog(
-            eventData,
-            eventData,
-            event,
-            transaction,
-          );
+          // await this.eventService.createEventLog(
+          //   eventData,
+          //   eventData,
+          //   event,
+          //   transaction,
+          // );
         } catch (error) {
           console.error('Error processing live event:', error);
         }
