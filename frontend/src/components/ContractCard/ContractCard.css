@@ -2,9 +2,8 @@
 
 .contract-card {
   width: 250px;
-  border: 1px solid #51FF00;
+  border: 1px solid #FFFFFF;
   padding: 16px;
-  border-radius: 8px;
   background-color: #0C0C0B;
   color: #51FF00;
   display: flex;
@@ -34,24 +33,23 @@
 
 .contract-card-address {
   font-size: 0.9rem;
-  color: #b3b3b3;
+  color: #FFFFFF;
   margin-bottom: 16px;
   text-align: center;
 }
 
 .contract-card-stats {
   display: flex;
+  flex-direction: column;
   width: 100%;
-  justify-content: space-between;
-  border-top: 1px solid #51FF00;
-  padding-top: 8px;
-  margin-top: 8px;
 }
 
 .contract-card-stat {
+  display: flex;
+  justify-content: space-between;
   font-size: 0.9rem;
-  text-align: center;
-  color: #b3b3b3;
+  color: #FFFFFF;
+  padding: 4px 0;
 }
 
 .contract-card-stat span {
@@ -73,3 +71,11 @@
 .contract-card-details:hover {
   background-color: rgba(81, 255, 0, 0.2);
 }
+
+.contract-card-stat + .contract-card-stat {
+  border-top: 1px solid #51FF00;
+  padding-top: 10px;
+  margin-top: 0px;
+}
+
+

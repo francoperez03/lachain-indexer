@@ -32,6 +32,7 @@ const ContractCard: React.FC<ContractCardProps> = ({ contract }) => {
       <p className="contract-card-address">
         {`${contract.address.slice(0, 5)}...${contract.address.slice(-3)}`}
       </p>
+      
       <div className="contract-card-stats">
         <p className="contract-card-stat">
           <span>eventos</span> {contract.eventLogsCount}
