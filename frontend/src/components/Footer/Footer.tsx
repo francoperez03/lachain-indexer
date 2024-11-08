@@ -1,23 +1,24 @@
-import React from 'react';
-import { Github } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import './Footer.css';
 
 export default function Footer() {
+  const [text, setText] = useState("from");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setText((prevText) => (prevText === "from" ? "for" : "from"));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <footer className="bg-black/50 backdrop-blur-xl border-t border-white/10">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <p className="text-gray-400">© 2024 echoSmart. All rights reserved.</p>
-          
-          <div className="flex items-center gap-4">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-[#6E2FE5] transition-colors duration-300"
-            >
-              <Github className="h-5 w-5" />
-            </a>
-          </div>
+    <footer className="footer">
+      <div className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">
+            Built with 💚 <span className="animated-text">{text}</span> LaTam
+          </p>
         </div>
       </div>
     </footer>

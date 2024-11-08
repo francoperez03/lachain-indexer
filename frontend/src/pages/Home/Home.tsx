@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import echosmartLanding from '@/assets/images/echosmartLanding.webp';
+import './Home.css';
 
 const Home: React.FC = () => {
   return (
@@ -18,16 +20,15 @@ const Home: React.FC = () => {
         color: 'white',
       }}
     >
-      <nav>
-        <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
-          <li style={{ margin: '1rem 0' }}>
-            <Link to="/contracts">Ver Contratos</Link>
-          </li>
-          <li style={{ margin: '1rem 0' }}>
-            <Link to="/contracts/add">Agregar Nuevo Contrato</Link>
-          </li>
-        </ul>
-      </nav>
+      <div className="button-container">
+      <Link to="/contracts">
+        <Button className="custom-button primary-button">Ver contratos</Button>
+      </Link>
+      <Link to="/contracts/add">
+        <Button className="custom-button secondary-button">Agregar Nuevo Contrato</Button>
+      </Link>
+
+      </div>
     </div>
   );
 };

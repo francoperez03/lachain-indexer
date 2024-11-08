@@ -1,0 +1,43 @@
+.background-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; 
+  padding-bottom: 3rem; 
+}
+.button-container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 18rem;
+  margin-right: 35rem;
+}
+
+.custom-button {
+  font-family: 'Orbitron', sans-serif;
+  padding: 0.75rem 1.5rem;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: none; /* Elimina cualquier borde */
+  box-shadow: none; /* Elimina cualquier sombra */
+}
+
+.custom-button.primary-button {
+  background-color: #00FF00 !important;
+  color: black !important;
+}
+
+.custom-button.primary-button:hover {
+  background-color: #00CC00 !important;
+}
+
+.custom-button.secondary-button {
+  background-color: white !important;
+  color: black !important;
+}
+
+.custom-button.secondary-button:hover {
+  background-color: #e0e0e0 !important;
+}

@@ -1,13 +1,39 @@
 /* Footer.css */
-.app-footer {
-  width: 100%;
-  background-color: #333;
-  color: #fff;
-  padding: 16px;
-  box-sizing: border-box;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 1000;
+
+.footer {
+  background-color: #0C0C0B;
+  backdrop-filter: blur(10px);
+}
+
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
   text-align: center;
+}
+
+.footer-text {
+  color: #b3b3b3;
+}
+
+.animated-text {
+  display: inline-block;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.animated-text-entering {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.animated-text-entered {
+  opacity: 1;
+  transform: translateY(0);
 }
