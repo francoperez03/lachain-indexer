@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getContractByAddress, deleteContractByAddress, startIndexing } from '../../services/contractService';
 import { Contract, ContractProcess } from '../../types/contract';
@@ -12,23 +12,24 @@ const ContractDetail: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  
+  const fetchContract = useCallback(async () => {
+    try {
+      if (address) {
+        const data = await getContractByAddress(address);
+        setContract(data);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Error al obtener los detalles del contrato.');
+    } finally {
+      setLoading(false);
+    }
+  }, [address]);
 
   useEffect(() => {
-    const fetchContract = async () => {
-      try {
-        if (address) {
-          const data = await getContractByAddress(address);
-          setContract(data);
-        }
-      } catch (err) {
-        console.error(err);
-        setError('Error al obtener los detalles del contrato.');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchContract();
-  }, [address]);
+  }, [fetchContract]);
 
   const handleDelete = async () => {
     if (address) {
@@ -45,7 +46,7 @@ const ContractDetail: React.FC = () => {
   return (
     <div>
       <ContractHeader contract={contract} onDelete={handleDelete} />
-      <IndexingControl contract={contract} latestProcess={latestProcess} onStartIndexing={startIndexing} onDelete={handleDelete} />
+      <IndexingControl contract={contract} latestProcess={latestProcess} onStartIndexing={startIndexing} onDelete={handleDelete} onIndexingComplete={fetchContract}  />
       <ContractTabs contract={contract} />
     </div>
   );
