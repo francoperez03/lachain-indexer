@@ -1,10 +1,17 @@
-@startuml LaChain Indexer
+@startuml echoSmart Diagram Class
 
 class Contract {
   + id: number
   + address: string
   + name: string
   + abi: object
+  + createdAt: Date
+}
+
+class ContractProcess {
+  + id: number
+  + status: string
+  + startBlock: bigint
   + createdAt: Date
 }
 
@@ -55,6 +62,8 @@ class Transaction {
 ' Relaciones entre las entidades
 
 Contract "1" --> "0..*" Event : events
+
+Contract "1" --> "0..*" ContractProcess : contractProcesses
 
 Event "1" --> "0..*" EventLog : eventLogs
 
