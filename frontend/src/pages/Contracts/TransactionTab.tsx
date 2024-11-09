@@ -13,11 +13,21 @@ const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions }) => {
       {transactions.length === 0 ? (
         <p className="no-transactions-message">No hay transacciones para este contrato.</p>
       ) : (
-        <div className="transactions-list">
-          {transactions.map((tx) => (
-            <div key={tx.id} className="transaction-item">
+          <div className="transactions-list">
+            {transactions.map((tx) => (
+              <div key={tx.id} className="transaction-item">
               <div className="transaction-details">
-                <p><strong>Hash de Transacción:</strong> {tx.hash}</p>
+                <p>
+                  <strong>Hash de Transacción:</strong> 
+                  <a 
+                    href={`https://explorer.lachain.network/tx/${tx.hash}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="transaction-link"
+                  >
+                    {tx.hash}
+                  </a>
+                </p>
                 <p><strong>Número de Bloque:</strong> {tx.blockNumber}</p>
               </div>
               <div className="transaction-info">

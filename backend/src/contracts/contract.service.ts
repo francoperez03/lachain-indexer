@@ -75,17 +75,13 @@ export class ContractService {
   }
 
   async findAll() {
-    return await this.contractRepository
+    // Primera consulta: Obtener contratos con conteos de eventos y transacciones
+    const contracts: any = await this.contractRepository
       .createQueryBuilder('contract')
       .loadRelationCountAndMap('contract.eventsCount', 'contract.events')
       .loadRelationCountAndMap(
         'contract.transactionsCount',
         'contract.transactions',
-      )
-      .loadRelationCountAndMap(
-        'contract.eventLogsCount',
-        'contract.events.eventLogs',
-        'eventLogs',
       )
       .select([
         'contract.id',
@@ -94,6 +90,29 @@ export class ContractService {
         'contract.createdAt',
       ])
       .getMany();
+
+    // Segunda consulta: Obtener conteo de eventLogs por contrato
+    const eventLogsCounts = await this.contractRepository
+      .createQueryBuilder('contract')
+      .leftJoin('contract.events', 'event')
+      .leftJoin('event.eventLogs', 'eventLog')
+      .select('contract.id', 'contractId')
+      .addSelect('COUNT(eventLog.id)', 'eventLogsCount')
+      .groupBy('contract.id')
+      .getRawMany();
+
+    // Crear un mapa para relacionar el ID del contrato con su conteo de eventLogs
+    const countsMap = {};
+    eventLogsCounts.forEach((row) => {
+      countsMap[row.contractId] = parseInt(row.eventLogsCount, 10);
+    });
+
+    // Asignar el conteo de eventLogs a cada contrato
+    contracts.forEach((contract) => {
+      contract.eventLogsCount = countsMap[contract.id] || 0;
+    });
+
+    return contracts;
   }
 
   async findByAddress(address: string) {

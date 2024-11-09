@@ -12,8 +12,15 @@ const EventLogRow: React.FC<EventLogRowProps> = ({ log }) => {
       <div className="event-log-row-header">
         <h4 className="event-signature">{log.signature}</h4>
         <div className="event-details">
-        <strong>Tx Hash:</strong>
-          <p> {log.transactionHash}</p>
+          <strong>Tx Hash:</strong>
+          <a 
+            href={`https://explorer.lachain.network/tx/${log.transactionHash}`} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="transaction-link"
+          >
+            {log.transactionHash}
+          </a>
         </div>
       </div>
       <div className="event-log-row-parameters">

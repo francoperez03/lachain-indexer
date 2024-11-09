@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Contract } from '../../types/contract';
 import GraphQLTab from './GraphQLTab';
 import EventLogsTab from './EventLogsTab';
@@ -13,6 +13,14 @@ interface ContractTabsProps {
 
 const ContractTabs: React.FC<ContractTabsProps> = ({ contract }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Redirige a la pestaña 'abi-events' si no hay ninguna ruta específica seleccionada
+    if (location.pathname === '/') {
+      navigate('abi-events');
+    }
+  }, [location.pathname, navigate]);
 
   return (
     <div className="contract-tabs-container">
@@ -33,9 +41,9 @@ const ContractTabs: React.FC<ContractTabsProps> = ({ contract }) => {
         </ul>
       </nav>
       <Routes>
+        <Route path="abi-events" element={<AbiAndEventsTab contract={contract} />} />
         <Route path="graphql" element={<GraphQLTab contract={contract} />} />
         <Route path="event-logs" element={<EventLogsTab contract={contract} />} />
-        <Route path="abi-events" element={<AbiAndEventsTab contract={contract} />} />
         <Route path="transactions" element={<TransactionsTab transactions={contract.transactions || []} />} />
       </Routes>
     </div>
