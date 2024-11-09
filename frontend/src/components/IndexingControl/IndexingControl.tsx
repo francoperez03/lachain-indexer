@@ -10,9 +10,10 @@ interface IndexingControlProps {
   latestProcess: ContractProcess | undefined;
   onStartIndexing: (address: string, startBlock: bigint) => Promise<void>;
   onDelete: () => Promise<void>;
+  onIndexingComplete: () => void;
 }
 
-const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProcess, onStartIndexing, onDelete }) => {
+const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProcess, onStartIndexing, onDelete, onIndexingComplete }) => {
   const [startBlock, setStartBlock] = useState<bigint>(BigInt(0));
   const [currentBlock, setCurrentBlock] = useState<number>(0);
   const [logsCount, setLogsCount] = useState<number | null>(null);
@@ -45,6 +46,7 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
       setIndexingLoading(true);
       await onStartIndexing(contract.address, startBlock);
       setIndexingLoading(false);
+      onIndexingComplete();
     } else {
       console.error('Error starting indexing:');
       setIndexingLoading(false);
