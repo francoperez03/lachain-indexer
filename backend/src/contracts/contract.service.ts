@@ -83,6 +83,11 @@ export class ContractService {
         'contract.transactionsCount',
         'contract.transactions',
       )
+      .loadRelationCountAndMap(
+        'contract.eventLogsCount',
+        'contract.events.eventLogs',
+        'eventLogs',
+      )
       .select([
         'contract.id',
         'contract.address',

@@ -1,5 +1,5 @@
 import React from 'react';
-import './Loader.css';
+import './loader.css';
 
 const Loader: React.FC<{ className?: string; size?: number }> = ({ className = '', size = 16 }) => (
   <img
