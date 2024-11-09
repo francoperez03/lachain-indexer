@@ -3,14 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { Contract, ContractProcess, ProcessStatus } from '../../types/contract';
 import { getBlockchainInfo } from '../../services/blockchainService';
 import { previewLogs } from '../../services/contractService';
-
+import './IndexingControl.css'
 interface IndexingControlProps {
   contract: Contract;
   latestProcess: ContractProcess | undefined;
   onStartIndexing: (address: string, startBlock: bigint) => Promise<void>;
+  onDelete: () => Promise<void>;
 }
 
-const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProcess, onStartIndexing }) => {
+const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProcess, onStartIndexing, onDelete }) => {
   const [startBlock, setStartBlock] = useState<bigint>(BigInt(0));
   const [currentBlock, setCurrentBlock] = useState<number>(0);
   const [logsCount, setLogsCount] = useState<number | null>(null);
@@ -60,27 +61,36 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
     }
   };
 
-  return (
-    <div style={{ marginTop: '20px' }}>
-      <p>Bloque actual: {currentBlock}</p>
-      <input
-        placeholder="Bloque de inicio"
-        onChange={handleStartBlockChange}
-        disabled={indexingLoading}
-      />
-      {logsCount !== null && (
-        <p><strong>Logs a guardar desde el bloque {startBlock.toString()}:</strong> {logsCount}</p>
-      )}
-      {latestProcess && (latestProcess.status === ProcessStatus.ABI_ADDED || latestProcess.status === ProcessStatus.FAILED) && (
-       <button
-          onClick={handleStartIndexing}
-          style={{ marginTop: '10px', backgroundColor: 'green', color: 'white', padding: '5px 10px' }}
+ return (
+  <div className="indexing-control-container">
+    <div className="indexing-control">
+      <p className="logs-count">
+        Indexar eventos desde el bloque:
+        <input
+          onChange={handleStartBlockChange}
+          className="indexing-input"
           disabled={indexingLoading}
-        >
-          {indexingLoading ? 'Indexando...' : 'Comenzar a Indexar'}
-        </button>
+        />
+      </p>
+      <p className="logs-count">
+        Número total de bloques actuales: <strong style={{ color: '#51FF00' }}>{currentBlock}</strong>
+      </p>
+      {logsCount !== null && (
+        <p className="logs-count">Logs a guardar desde el bloque {startBlock.toString()}: {logsCount}</p>
       )}
+      <div className="button-group">
+        {latestProcess && (latestProcess.status === ProcessStatus.ABI_ADDED || latestProcess.status === ProcessStatus.FAILED) && (
+          <button onClick={handleStartIndexing} className="indexing-button" disabled={indexingLoading}>
+            {indexingLoading ? 'Indexando...' : 'Comenzar a Indexar'}
+          </button>
+        )}
+        <button onClick={onDelete} className="delete-button">
+          Eliminar Contrato
+        </button>
+      </div>
     </div>
+  </div>
+
   );
 };
 

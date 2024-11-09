@@ -1,0 +1,44 @@
+.contract-tabs-container {
+  margin-top: 20px;
+}
+
+.tabs-nav {
+  display: flex;
+  justify-content: center;
+  border-bottom: 2px solid #51FF00; /* Borde inferior verde */
+  margin-bottom: 16px;
+}
+
+.tabs-list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 1px; /* Espacio entre pestañas */
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-family: 'Orbitron', sans-serif;
+  color: #FFFFFF;
+  border: 1px solid #51FF00; /* Borde verde entre las pestañas */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.tab-item a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.tab-item:hover {
+  background-color: rgba(81, 255, 0, 0.2); /* Efecto hover */
+}
+
+.tab-item.active {
+  background-color: #51FF00; /* Color de fondo activo */
+  color: #0C0C0B; /* Texto oscuro en la pestaña activa */
+}

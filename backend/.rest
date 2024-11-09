@@ -114,7 +114,7 @@ Content-Type: application/json
 
 {
   "address": "0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7",
-  "startBlock": 11058113
+  "startBlock": "11058113"
 }
 
 ### Preview Indexing

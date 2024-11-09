@@ -45,7 +45,7 @@ const ContractDetail: React.FC = () => {
   return (
     <div>
       <ContractHeader contract={contract} onDelete={handleDelete} />
-      <IndexingControl contract={contract} latestProcess={latestProcess} onStartIndexing={startIndexing} />
+      <IndexingControl contract={contract} latestProcess={latestProcess} onStartIndexing={startIndexing} onDelete={handleDelete} />
       <ContractTabs contract={contract} />
     </div>
   );

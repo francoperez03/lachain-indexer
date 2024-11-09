@@ -7,5 +7,5 @@ export class IndexContractEventsDto {
 
   @IsNotEmpty()
   @IsNumber()
-  startBlock: number;
+  startBlock: bigint;
 }

@@ -1,24 +1,35 @@
 import React from 'react';
-import { Link, Routes, Route } from 'react-router-dom';
+import { Link, Routes, Route, useLocation } from 'react-router-dom';
 import { Contract } from '../../types/contract';
 import GraphQLTab from './GraphQLTab';
 import EventLogsTab from './EventLogsTab';
 import AbiAndEventsTab from './AbiAndEventsTab';
 import TransactionsTab from './TransactionTab';
+import './ContractTabs.css';
 
 interface ContractTabsProps {
   contract: Contract;
 }
 
 const ContractTabs: React.FC<ContractTabsProps> = ({ contract }) => {
+  const location = useLocation();
+
   return (
-    <div style={{ marginTop: '20px' }}>
-      <nav>
-        <ul>
-          <li><Link to="graphql">Consulta GraphQL</Link></li>
-          <li><Link to="event-logs">Event Logs</Link></li>
-          <li><Link to="abi-events">ABI y Eventos</Link></li>
-          <li><Link to="transactions">Transacciones</Link></li>
+    <div className="contract-tabs-container">
+      <nav className="tabs-nav">
+        <ul className="tabs-list">
+          <li className={`tab-item ${location.pathname.includes('abi-events') ? 'active' : ''}`}>
+            <Link to="abi-events">ABI y Eventos</Link>
+          </li>
+          <li className={`tab-item ${location.pathname.includes('graphql') ? 'active' : ''}`}>
+            <Link to="graphql">Consulta GraphQL</Link>
+          </li>
+          <li className={`tab-item ${location.pathname.includes('event-logs') ? 'active' : ''}`}>
+            <Link to="event-logs">Eventos generados</Link>
+          </li>
+          <li className={`tab-item ${location.pathname.includes('transactions') ? 'active' : ''}`}>
+            <Link to="transactions">Transacciones</Link>
+          </li>
         </ul>
       </nav>
       <Routes>

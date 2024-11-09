@@ -1,5 +1,8 @@
 import React from 'react';
 import { Contract } from '../../types/contract';
+import './AbiAndEventsTab.css';
+import JsonView from '@uiw/react-json-view';
+import { githubDarkTheme } from '@uiw/react-json-view/githubDark';
 
 interface AbiAndEventsTabProps {
   contract: Contract;
@@ -7,23 +10,26 @@ interface AbiAndEventsTabProps {
 
 const AbiAndEventsTab: React.FC<AbiAndEventsTabProps> = ({ contract }) => {
   return (
-    <div>
-      <h3>ABI del Contrato</h3>
-      <pre>{JSON.stringify(contract.abi, null, 2)}</pre>
-
-      <h3>Eventos del Contrato</h3>
+    <div className="abi-events-tab">
       {contract.events.length === 0 ? (
-        <p>No hay eventos para este contrato.</p>
+        <p className="no-events-message">No hay eventos para este contrato.</p>
       ) : (
-        <ul>
+        <div className="events-list">
           {contract.events.map((event) => (
-            <li key={event.id}>
-              <strong>Nombre del Evento:</strong> {event.name} <br />
-              <strong>Firma:</strong> {event.signature}
-            </li>
+            <div key={event.id} className="event-item">
+              <span className="event-name">{event.name}</span>
+              <span className="event-signature">Firma: {event.signature}</span>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
+
+      <div className="abi-container">
+        <h3 className="abi-title">ABI del Contrato</h3>
+        <pre className="abi-content">
+          <JsonView value={contract.abi} style={githubDarkTheme}  />
+        </pre>
+      </div>  
     </div>
   );
 };

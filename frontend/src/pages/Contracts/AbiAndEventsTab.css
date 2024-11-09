@@ -1,0 +1,87 @@
+.abi-events-tab {
+  margin-top: 20px;
+  color: #FFFFFF;
+  font-family: 'Orbitron', sans-serif;
+  padding: 0 20px;
+}
+
+.no-events-message {
+  color: #b3b3b3;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0C0C0B;
+  border: 1px solid #FFFFFF;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+  min-width: 650px; /* Define el ancho máximo de las tarjetas */
+  margin: 0 auto; /* Centra las tarjetas */
+}
+
+.event-item:hover {
+  box-shadow: 0 4px 10px rgba(81, 255, 0, 0.2);
+}
+
+.event-name {
+  font-size: 1.1rem;
+  color: #51FF00;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.event-signature {
+  color: #b3b3b3;
+  font-size: 0.9rem;
+}
+
+.abi-container {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #0C0C0B;
+  border: 1px solid #FFFFFF;
+  border-radius: 8px;
+  min-width: 650px; /* Define el ancho máximo de las tarjetas */
+  max-width: 60px; /* Define el ancho máximo del contenedor ABI */
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: auto;
+}
+
+.abi-title {
+  gap: 12px;
+
+  font-size: 1.3rem;
+  color: #51FF00;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.abi-content {
+  color: #b3b3b3;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  background-color: #0C0C0B;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #FFFFFF;
+  text-align: left;
+}
+
+.abi-content > div {
+  text-align: left !important;
+}
