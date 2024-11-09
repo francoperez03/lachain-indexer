@@ -20,6 +20,14 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
   const [indexingLoading, setIndexingLoading] = useState<boolean>(false);
   const [loadingLogs, setLoadingLogs] = useState<boolean>(false);
 
+  const calculateCreationTime = () => {
+    const createdAt = new Date(contract.createdAt);
+    const now = new Date();
+    const differenceInMs = now.getTime() - (createdAt.getTime() - (1000 * 60 * 60 * 3));
+    const daysAgo = Math.floor(differenceInMs / (1000 * 60 * 60 * 24));
+    return  daysAgo === 0?  'Hoy' : `hace ${daysAgo} día${daysAgo !== 1 ? 's' : ''}`
+  };
+
   useEffect(() => {
     const fetchCurrentBlock = async () => {
       try {
@@ -63,7 +71,7 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
         } finally {
           setLoadingLogs(false);
         }
-      }, 2000);
+      }, 1000);
       setTypingTimeout(timeout);
     } else {
       setLoadingLogs(false); // Desactiva el spinner si no cumple la condición
@@ -101,6 +109,11 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
           <button onClick={onDelete} className="delete-button">
             Eliminar Contrato
           </button>
+        </div>
+        <div className="contract-info">
+          <span>{contract.eventLogs.length} eventos</span> |
+          <span>{contract.transactions.length} transacciones</span> |
+          <span>creado {calculateCreationTime()}</span>
         </div>
       </div>
     </div>

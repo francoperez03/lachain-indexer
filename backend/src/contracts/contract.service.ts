@@ -96,7 +96,6 @@ export class ContractService {
       ])
       .getMany();
 
-    // Segunda consulta: Obtener conteo de eventLogs por contrato
     const eventLogsCounts = await this.contractRepository
       .createQueryBuilder('contract')
       .leftJoin('contract.events', 'event')
@@ -106,13 +105,11 @@ export class ContractService {
       .groupBy('contract.id')
       .getRawMany();
 
-    // Crear un mapa para relacionar el ID del contrato con su conteo de eventLogs
     const countsMap = {};
     eventLogsCounts.forEach((row) => {
       countsMap[row.contractId] = parseInt(row.eventLogsCount, 10);
     });
 
-    // Asignar el conteo de eventLogs a cada contrato
     contracts.forEach((contract) => {
       contract.eventLogsCount = countsMap[contract.id] || 0;
     });
