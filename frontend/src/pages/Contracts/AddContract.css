@@ -1,5 +1,5 @@
 .add-contract-container {
-  background-image: url('/src/assets/images/addContract-bg.webp');
+  /* background-image: url('/src/assets/images/addContract-bg.webp'); */
   background-size: cover;
   background-position: center;
   display: flex;
@@ -8,6 +8,7 @@
   color: #FFFFFF;
   padding: 40px 20px;
   font-family: 'Orbitron', sans-serif;
+  flex-direction: column;
 }
 
 .add-contract-form {
@@ -75,4 +76,24 @@
 
 .add-contract-button:hover {
   background-color: #3bbf00;
+}
+.add-contract-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #FFFFFF; /* Texto principal en blanco */
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: 'Orbitron', sans-serif;
+  position: relative;
+}
+
+.add-contract-title::after {
+  content: 'AGREGAR UN NUEVO CONTRATO';
+  position: absolute;
+  top: 2px; /* Alinea el contorno verde con el texto principal */
+  left: 2px;
+  width: 100%;
+  color: transparent; /* Hace el texto de fondo invisible */
+  -webkit-text-stroke: 1px #51FF00; /* Contorno verde */
+  z-index: -1;
 }

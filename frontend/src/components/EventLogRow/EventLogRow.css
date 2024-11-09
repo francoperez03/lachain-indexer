@@ -9,7 +9,8 @@
 }
 
 .event-log-row:hover {
-  box-shadow: 0 4px 10px rgba(81, 255, 0, 0.2);
+  box-shadow: 0 8px 15px rgba(81, 255, 0, 0.2);
+  transform: translateY(-5px);
 }
 
 .event-log-row-header {
