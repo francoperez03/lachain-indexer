@@ -24,7 +24,7 @@
   font-size: 1rem;
   font-family: 'Orbitron', sans-serif;
   color: #FFFFFF;
-  border: 1px solid #51FF00; /* Borde verde entre las pestañas */
+  border: 1px solid #51FF00;
   transition: background-color 0.3s ease, color 0.3s ease;
   cursor: pointer;
 }
@@ -35,10 +35,18 @@
 }
 
 .tab-item:hover {
-  background-color: rgba(81, 255, 0, 0.2); /* Efecto hover */
+  background-color: #51ff0033;
 }
 
 .tab-item.active {
-  background-color: #51FF00; /* Color de fondo activo */
-  color: #0C0C0B; /* Texto oscuro en la pestaña activa */
+  background-color: #51ff0033; 
+  color: #FFFFFF;
+}
+
+.tab-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 15px 22px;
+  box-sizing: border-box;
 }

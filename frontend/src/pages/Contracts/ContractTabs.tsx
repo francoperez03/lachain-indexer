@@ -19,16 +19,16 @@ const ContractTabs: React.FC<ContractTabsProps> = ({ contract }) => {
       <nav className="tabs-nav">
         <ul className="tabs-list">
           <li className={`tab-item ${location.pathname.includes('abi-events') ? 'active' : ''}`}>
-            <Link to="abi-events">ABI y Eventos</Link>
+            <Link to="abi-events" className="tab-link">ABI y Eventos</Link>
           </li>
           <li className={`tab-item ${location.pathname.includes('graphql') ? 'active' : ''}`}>
-            <Link to="graphql">Consulta GraphQL</Link>
+            <Link to="graphql" className="tab-link">Consulta GraphQL</Link>
           </li>
           <li className={`tab-item ${location.pathname.includes('event-logs') ? 'active' : ''}`}>
-            <Link to="event-logs">Eventos generados</Link>
+            <Link to="event-logs" className="tab-link">Eventos generados</Link>
           </li>
           <li className={`tab-item ${location.pathname.includes('transactions') ? 'active' : ''}`}>
-            <Link to="transactions">Transacciones</Link>
+            <Link to="transactions" className="tab-link">Transacciones</Link>
           </li>
         </ul>
       </nav>

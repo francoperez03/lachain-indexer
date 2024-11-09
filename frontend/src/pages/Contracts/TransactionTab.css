@@ -1,0 +1,59 @@
+.transactions-tab {
+  margin-top: 20px;
+  color: #FFFFFF;
+  font-family: 'Orbitron', sans-serif;
+  padding: 0 20px;
+}
+
+.transactions-title {
+  font-size: 1.5rem;
+  color: #51FF00;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.no-transactions-message {
+  color: #b3b3b3;
+  font-size: 1.2rem;
+  text-align: left;
+  margin: 20px 0;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.transaction-item {
+  background-color: #0C0C0B;
+  border: 1px solid #FFFFFF;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: left;
+  transition: box-shadow 0.3s ease;
+}
+
+.transaction-item:hover {
+  box-shadow: 0 4px 10px rgba(81, 255, 0, 0.2);
+}
+
+.transaction-details, .transaction-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transaction-details p, .transaction-info p {
+  color: #b3b3b3;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.transaction-details p strong, .transaction-info p strong {
+  color: #FFFFFF;
+}

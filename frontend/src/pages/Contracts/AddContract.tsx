@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addContract } from '../../services/contractService';
 import { Contract } from '../../types/contract';
+import './AddContract.css';
 
 const AddContract: React.FC = () => {
   const [name, setName] = useState<string>('');
@@ -29,7 +30,6 @@ const AddContract: React.FC = () => {
     }
     setIsAbiValid(abiValid);
 
-    // Mostrar error si hay campos inválidos
     if (!addressValid || !abiValid) {
       setError('Corrige los errores antes de enviar el formulario.');
       return;
@@ -47,57 +47,49 @@ const AddContract: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Agregar Nuevo Contrato</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Nombre del Contrato:
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </label>
+    <div className="add-contract-container">
+      <form onSubmit={handleSubmit} className="add-contract-form">
+        {error && <p className="error-message">{error}</p>}
+        
+        <div className="input-group">
+          <label>Nombre del Contrato:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
         </div>
-        <div>
-          <label>
-            Dirección del Contrato:
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              style={{
-                borderColor: isAddressValid ? 'initial' : 'red',
-              }}
-              required
-            />
-            {!isAddressValid && (
-              <p style={{ color: 'red' }}>Dirección no válida. Debe ser una dirección hexadecimal de 42 caracteres.</p>
-            )}
-          </label>
+
+        <div className="input-group">
+          <label>Dirección del Contrato:</label>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            style={{ borderColor: isAddressValid ? 'initial' : 'red' }}
+            required
+          />
+          {!isAddressValid && (
+            <p className="error-message">Dirección no válida. Debe ser una dirección hexadecimal de 42 caracteres.</p>
+          )}
         </div>
-        <div>
-          <label>
-            ABI del Contrato (formato JSON):
-            <textarea
-              value={abi}
-              onChange={(e) => setAbi(e.target.value)}
-              rows={10}
-              cols={50}
-              style={{
-                borderColor: isAbiValid ? 'initial' : 'red',
-              }}
-              required
-            />
-            {!isAbiValid && (
-              <p style={{ color: 'red' }}>ABI no válido. Asegúrate de que sea un JSON válido.</p>
-            )}
-          </label>
+
+        <div className="input-group">
+          <label>ABI del Contrato (formato JSON):</label>
+          <textarea
+            value={abi}
+            onChange={(e) => setAbi(e.target.value)}
+            rows={6}
+            style={{ borderColor: isAbiValid ? 'initial' : 'red' }}
+            required
+          />
+          {!isAbiValid && (
+            <p className="error-message">ABI no válido. Asegúrate de que sea un JSON válido.</p>
+          )}
         </div>
-        <button type="submit">Agregar Contrato</button>
+
+        <button type="submit" className="add-contract-button">Agregar Contrato</button>
       </form>
     </div>
   );

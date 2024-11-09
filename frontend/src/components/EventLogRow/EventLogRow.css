@@ -1,51 +1,73 @@
-/* EventLogRow.css */
 .event-log-row {
-  border: 1px solid #e0e0e0;
+  background-color: #0C0C0B;
+  border: 1px solid #FFFFFF;
   border-radius: 8px;
   padding: 16px;
-  margin-bottom: 12px;
-  background-color: #fafafa;
-  transition: box-shadow 0.2s ease;
+  margin: 8px auto;
+  transition: box-shadow 0.3s ease;
+  max-width: 800px; /* Define el ancho máximo de las tarjetas */
 }
 
 .event-log-row:hover {
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(81, 255, 0, 0.2);
 }
 
 .event-log-row-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+  flex-direction: column;
+  align-items: flex-start; /* Alinea el contenido a la izquierda */
+  margin-bottom: 12px;
 }
 
-.event-log-row-header h4 {
-  margin: 0;
-  color: #333;
+.event-signature {
+  color: #51FF00;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px; /* Espacio entre la firma y los detalles */
 }
 
-.event-log-row-header p {
+.event-details {
+  display: flex;
+  gap: 20px;
+  font-size: 0.9rem;
+  color: #b3b3b3;
+}
+
+.event-details p {
   margin: 0;
-  color: #666;
 }
 
 .event-log-row-parameters {
-  margin-top: 8px;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #FFFFFF;
 }
 
-.event-log-row-parameters h5 {
-  margin: 0;
-  color: #333;
-  font-weight: 500;
+.parameters-title {
+  font-size: 1rem;
+  color: #51FF00;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: left;
 }
 
-.event-log-row-parameters ul {
-  list-style-type: none;
+.parameters-list {
+  list-style: none;
   padding: 0;
-  margin-top: 4px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left; /* Alinea el texto a la izquierda */
 }
 
-.event-log-row-parameters li {
-  color: #555;
-  font-size: 14px;
+.parameter-item {
+  color: #b3b3b3;
+  font-size: 0.9rem;
+  display: flex;
+  gap: 5px;
+}
+
+.parameter-item strong {
+  color: #FFFFFF;
 }

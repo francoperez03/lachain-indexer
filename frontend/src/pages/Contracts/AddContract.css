@@ -1,0 +1,78 @@
+.add-contract-container {
+  background-image: url('/src/assets/images/addContract-bg.webp');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #FFFFFF;
+  padding: 40px 20px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.add-contract-form {
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+}
+
+.add-contract-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #51FF00;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-bottom: 8px;
+}
+
+.input-group input,
+.input-group textarea {
+  padding: 8px;
+  background-color: #0C0C0B;
+  color: #FFFFFF;
+  border: 1px solid #51FF00;
+  border-radius: 0px;
+  font-family: inherit;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(81, 255, 0, 0.5);
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.add-contract-button {
+  background-color: #51FF00;
+  color: #0C0C0B;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.add-contract-button:hover {
+  background-color: #3bbf00;
+}

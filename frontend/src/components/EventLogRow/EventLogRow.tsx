@@ -1,4 +1,3 @@
-// EventLogRow.tsx
 import React from 'react';
 import { EventLog } from '../../types/event';
 import './EventLogRow.css';
@@ -11,15 +10,17 @@ const EventLogRow: React.FC<EventLogRowProps> = ({ log }) => {
   return (
     <div className="event-log-row">
       <div className="event-log-row-header">
-        <h4>{log.signature}</h4>
-        <p><strong>Block:</strong> {log.blockNumber}</p>
-        <p><strong>Tx Hash:</strong> {log.transactionHash}</p>
+        <h4 className="event-signature">{log.signature}</h4>
+        <div className="event-details">
+        <strong>Tx Hash:</strong>
+          <p> {log.transactionHash}</p>
+        </div>
       </div>
       <div className="event-log-row-parameters">
-        <h5>Parameters:</h5>
-        <ul>
+        <h5 className="parameters-title">Parámetros:</h5>
+        <ul className="parameters-list">
           {log.parameters.map((param) => (
-            <li key={param.id}>
+            <li key={param.id} className="parameter-item">
               <strong>{param.name}:</strong> {param.value}
             </li>
           ))}
