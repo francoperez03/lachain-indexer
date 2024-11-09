@@ -1,0 +1,82 @@
+.indexing-control {
+  margin-top: 20px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.logs-count {
+  font-size: 1.2rem;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+}
+
+.indexing-input {
+  padding: 10px;
+  border: 2px solid #51FF00;
+  background-color: #0C0C0B;
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-family: 'Orbitron', sans-serif;
+  width: 200px;
+  margin-left: 16px;
+}
+
+.button-group {
+  display: flex;
+  gap: 16px; /* Espacio entre los botones */
+  margin-top: 16px;
+}
+
+.indexing-button {
+  color: #51FF00;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border: 1px solid #51FF00;
+  padding: 8px 16px;
+  border-radius: 0;
+  background-color: #0C0C0B;
+  transition: background-color 0.3s ease;
+}
+
+.indexing-button:hover {
+  background-color: rgba(81, 255, 0, 0.2);
+}
+
+.delete-button {
+  background-color: red;
+  color: white;
+  padding: 8px 16px;
+  font-weight: bold;
+  border: 1px solid red;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #ff4d4d;
+}
+
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.progress-bar {
+  width: 85%; /* Ajusta el tamaño de la barra de progreso */
+  height: 5px;
+  background-color: #51FF00;
+}
+
+.progress-text {
+  color: #FFFFFF;
+  font-size: 0.9rem;
+}
+
+.indexing-control-container {
+  margin-left: 7.5rem; /* Ajusta el valor según la distancia que quieras */
+}

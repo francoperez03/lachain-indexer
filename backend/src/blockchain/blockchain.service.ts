@@ -19,7 +19,7 @@ export class BlockchainService {
 
   async startIndexingContractEvents(
     contractEntity: Contract,
-    startBlock: number,
+    startBlock: bigint,
     onFinish: () => Promise<void>,
   ) {
     const { address, abi } = contractEntity;
@@ -41,12 +41,13 @@ export class BlockchainService {
     contract: ethers.Contract,
     contractEntity: Contract,
     event: Event,
-    startBlock: number,
+    startBlock: bigint,
   ) {
     const eventName = event.name;
     const eventFilter = contract.filters[eventName]();
-    const logs = await contract.queryFilter(eventFilter, startBlock);
-
+    const startBlockBigInt = BigInt(startBlock);
+    const logs = await contract.queryFilter(eventFilter, startBlockBigInt);
+    console.log({ startBlockBigInt });
     await Promise.all(
       logs.map(async (log) => {
         try {
@@ -54,7 +55,7 @@ export class BlockchainService {
           let transaction = await this.transactionService.findByHash(
             log.transactionHash,
           );
-
+          console.log({ transaction });
           if (!transaction) {
             const tx = await this.provider.getTransaction(log.transactionHash);
             transaction = await this.transactionService.createTransaction(

@@ -14,7 +14,7 @@ export interface Contract {
   id: number;
   address: string;
   name: string;
-  abi: object | null;
+  abi: object;
   eventLogs: EventLog[]
   events: Event[]
   transactions: Transaction[]

@@ -38,8 +38,8 @@ export const deleteContractByAddress = async (address: string): Promise<void> =>
   await apiClient.delete(`/contracts/${address}`);
 };  
 
-export const startIndexing = async (address: string): Promise<void> => {
-  await apiClient.post(`/contracts/index`, { address });
+export const startIndexing = async (address: string, startBlock: bigint): Promise<void> => {
+  await apiClient.post(`/contracts/index`, { address, startBlock: startBlock.toString() });
 };
 
 export const previewLogs = async (address: string, startBlock: bigint) => {

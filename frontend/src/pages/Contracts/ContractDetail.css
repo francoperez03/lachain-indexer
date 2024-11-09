@@ -1,0 +1,43 @@
+.contract-detail-container {
+  padding: 20px;
+  color: #FFFFFF;
+}
+
+.contract-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.contract-icon {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #51FF00;
+  background-color: #0C0C0B;
+}
+
+.contract-header-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  color: #FFFFFF;
+}
+
+.contract-address {
+  color: #51FF00;
+  font-size: 1.2rem;
+}
+
+.delete-button {
+  background-color: red;
+  color: white;
+  padding: 10px 15px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #ff4d4d;
+}
