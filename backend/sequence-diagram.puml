@@ -1,0 +1,26 @@
+@startuml
+actor User
+participant Frontend
+participant Backend
+
+User -> Frontend: Register new contract
+Frontend -> Backend: POST /contracts
+Backend --> Frontend: Contract registered (ID and address)
+
+User -> Frontend: Add ABI to contract
+Frontend -> Backend: POST /contracts/add-abi
+Backend --> Frontend: ABI associated with contract
+
+User -> Frontend: Preview event logs
+Frontend -> Backend: GET /contracts/index/preview
+Backend --> Frontend: Number of logs to be retrieved
+
+User -> Frontend: Start indexing
+Frontend -> Backend: POST /contracts/index
+Backend --> Frontend: Indexing started
+
+User -> Frontend: Check contract status
+Frontend -> Backend: GET /contracts/:address
+Backend --> Frontend: Contract status and details (events, transactions, etc.)
+
+@enduml
