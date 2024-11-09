@@ -86,6 +86,7 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
         <div className="logs-count-wrapper">
           <p className="logs-count">
             Indexar eventos desde el bloque:
+            <span style={{ marginRight: '14px' }}></span>
             <input
               onChange={handleStartBlockChange}
               className="indexing-input"

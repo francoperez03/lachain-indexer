@@ -28,7 +28,7 @@
   padding: 8px 16px;
   border-radius: 8px;
   transition: box-shadow 0.3s ease;
-  min-width: 650px; /* Define el ancho máximo de las tarjetas */
+  min-width: 830px; /* Define el ancho máximo de las tarjetas */
   margin: 0 auto; /* Centra las tarjetas */
 }
 
@@ -56,7 +56,7 @@
   border: 1px solid #FFFFFF;
   border-radius: 8px;
   min-width: 650px; /* Define el ancho máximo de las tarjetas */
-  max-width: 60px; /* Define el ancho máximo del contenedor ABI */
+  max-width: 830px; /* Define el ancho máximo del contenedor ABI */
   margin-left: auto;
   margin-right: auto;
   margin-bottom: auto;
