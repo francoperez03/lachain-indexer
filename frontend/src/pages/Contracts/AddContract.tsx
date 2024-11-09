@@ -17,11 +17,9 @@ const AddContract: React.FC = () => {
     e.preventDefault();
     setError(null);
 
-    // Validación de la dirección
     const addressValid = /^0x[a-fA-F0-9]{40}$/.test(address);
     setIsAddressValid(addressValid);
 
-    // Validación del ABI JSON
     let abiValid = true;
     try {
       JSON.parse(abi);
@@ -48,7 +46,10 @@ const AddContract: React.FC = () => {
 
   return (
     <div className="add-contract-container">
+      <h2 className="add-contract-title">AGREGAR UN NUEVO CONTRATO</h2>
+
       <form onSubmit={handleSubmit} className="add-contract-form">
+
         {error && <p className="error-message">{error}</p>}
         
         <div className="input-group">
