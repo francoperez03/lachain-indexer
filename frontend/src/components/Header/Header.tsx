@@ -29,7 +29,7 @@ export default function Header() {
             to="/contracts"
             className={`nav-link ${location.pathname === '/contracts' ? 'active' : ''}`}
           >
-            <span>CONTRACTOS</span>
+            <span>CONTRATOS</span>
           </Link>
           
           <Link

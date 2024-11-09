@@ -11,6 +11,8 @@ interface AbiAndEventsTabProps {
 const AbiAndEventsTab: React.FC<AbiAndEventsTabProps> = ({ contract }) => {
   return (
     <div className="abi-events-tab">
+      <h3 className="transactions-title">Eventos del Contrato</h3>
+
       {contract.events.length === 0 ? (
         <p className="no-events-message">No hay eventos para este contrato.</p>
       ) : (

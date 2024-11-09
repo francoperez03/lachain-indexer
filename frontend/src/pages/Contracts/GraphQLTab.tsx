@@ -1,5 +1,5 @@
-// GraphQLTab.tsx
 import React, { useState } from 'react';
+import MonacoEditor from '@monaco-editor/react';
 import { executeGraphQLQuery } from '../../services/graphQLService';
 import { Contract } from '../../types/contract';
 import './GraphQLTab.css';
@@ -39,11 +39,19 @@ const GraphQLTab: React.FC<GraphQLTabProps> = ({ contract }) => {
     <div className="graphql-tab">
       <h3 className="graphql-title">Consulta GraphQL</h3>
       {error && <p className="graphql-error">{error}</p>}
-      <textarea
+      <MonacoEditor
+        height="300px"
+        language="graphql"
+        theme="vs-dark"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        rows={10}
-        className="graphql-textarea"
+        options={{
+          selectOnLineNumbers: true,
+          roundedSelection: false,
+          cursorStyle: 'line',
+          automaticLayout: true,
+        }}
+        onChange={(value) => setQuery(value || '')}
+        className="graphql-editor"
       />
       <button onClick={handleExecute} className="graphql-button">Ejecutar</button>
       {result && (

@@ -4,6 +4,7 @@ import { Contract, ContractProcess, ProcessStatus } from '../../types/contract';
 import { getBlockchainInfo } from '../../services/blockchainService';
 import { previewLogs } from '../../services/contractService';
 import './IndexingControl.css'
+import Loader from '../ui/loader';
 interface IndexingControlProps {
   contract: Contract;
   latestProcess: ContractProcess | undefined;
@@ -15,9 +16,10 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
   const [startBlock, setStartBlock] = useState<bigint>(BigInt(0));
   const [currentBlock, setCurrentBlock] = useState<number>(0);
   const [logsCount, setLogsCount] = useState<number | null>(null);
-  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout>  | null>(null);
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [indexingLoading, setIndexingLoading] = useState<boolean>(false);
-  
+  const [loadingLogs, setLoadingLogs] = useState<boolean>(false);
+
   useEffect(() => {
     const fetchCurrentBlock = async () => {
       try {
@@ -45,9 +47,12 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
     const value = BigInt(e.target.value);
     setStartBlock(value);
     setLogsCount(null);
+    setLoadingLogs(true);
+
     if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
+
     if (value && currentBlock && value >= BigInt(0) && value <= currentBlock) {
       const timeout = setTimeout(async () => {
         try {
@@ -55,41 +60,50 @@ const IndexingControl: React.FC<IndexingControlProps> = ({ contract, latestProce
           setLogsCount(logsData);
         } catch (err) {
           console.error('Error previewing logs:', err);
+        } finally {
+          setLoadingLogs(false);
         }
       }, 2000);
       setTypingTimeout(timeout);
+    } else {
+      setLoadingLogs(false); // Desactiva el spinner si no cumple la condición
     }
   };
 
- return (
-  <div className="indexing-control-container">
-    <div className="indexing-control">
-      <p className="logs-count">
-        Indexar eventos desde el bloque:
-        <input
-          onChange={handleStartBlockChange}
-          className="indexing-input"
-          disabled={indexingLoading}
-        />
-      </p>
-      <p className="logs-count">
-        Número total de bloques actuales: <strong style={{ color: '#51FF00' }}>{currentBlock}</strong>
-      </p>
-      {logsCount !== null && (
-        <p className="logs-count">Logs a guardar desde el bloque {startBlock.toString()}: {logsCount}</p>
-      )}
-      <div className="button-group">
-        {latestProcess && (latestProcess.status === ProcessStatus.ABI_ADDED || latestProcess.status === ProcessStatus.FAILED) && (
-          <button onClick={handleStartIndexing} className="indexing-button" disabled={indexingLoading}>
-            {indexingLoading ? 'Indexando...' : 'Comenzar a Indexar'}
-          </button>
+  return (
+    <div className="indexing-control-container">
+      <div className="indexing-control">
+        <div className="logs-count-wrapper">
+          <p className="logs-count">
+            Indexar eventos desde el bloque:
+            <input
+              onChange={handleStartBlockChange}
+              className="indexing-input"
+              disabled={indexingLoading}
+            />
+          </p>
+        </div>
+        <p className="logs-count">
+          Número total de bloques actuales: <strong style={{ color: '#51FF00' }}>{currentBlock}</strong>
+        </p>
+        {startBlock > 0 && (
+          <p className="logs-count">
+            Eventos a guardar desde el bloque <strong style={{ color: '#51FF00' }}>{startBlock.toString()}</strong>: {logsCount}
+            {loadingLogs && <Loader className="loader" />}
+          </p>
         )}
-        <button onClick={onDelete} className="delete-button">
-          Eliminar Contrato
-        </button>
+        <div className="button-group">
+          {latestProcess && (latestProcess.status === ProcessStatus.ABI_ADDED || latestProcess.status === ProcessStatus.FAILED) && (
+            <button onClick={handleStartIndexing} className="indexing-button" disabled={indexingLoading}>
+              {indexingLoading ? 'Indexando...' : 'Comenzar a Indexar'}
+            </button>
+          )}
+          <button onClick={onDelete} className="delete-button">
+            Eliminar Contrato
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
   );
 };

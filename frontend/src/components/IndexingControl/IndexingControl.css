@@ -6,23 +6,6 @@
   align-items: flex-start;
 }
 
-.logs-count {
-  font-size: 1.2rem;
-  color: #FFFFFF;
-  margin-bottom: 10px;
-}
-
-.indexing-input {
-  padding: 10px;
-  border: 2px solid #51FF00;
-  background-color: #0C0C0B;
-  color: #FFFFFF;
-  font-size: 1rem;
-  font-family: 'Orbitron', sans-serif;
-  width: 200px;
-  margin-left: 16px;
-}
-
 .button-group {
   display: flex;
   gap: 16px; /* Espacio entre los botones */
@@ -81,4 +64,66 @@
 
 .indexing-control-container {
   margin-left: 7.5rem; /* Ajusta el valor según la distancia que quieras */
+}
+
+.input-spinner-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  border: 2px solid #FFFFFF;
+  border-top: 2px solid #51FF00;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #51FF00;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.logs-count-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre el texto, el input y el texto de carga */
+}
+
+.logs-count {
+  font-size: 1.2rem;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+}
+
+.indexing-input {
+  padding: 10px;
+  border: 2px solid #51FF00;
+  background-color: #0C0C0B;
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-family: 'Orbitron', sans-serif;
+  width: 200px;
+}
+
+.input-spinner-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.loading-text {
+  color: #51FF00;
+  font-size: 0.85rem;
+}
+.loader {
+  margin-left: 8px; /* Ajusta el margen si deseas espacio entre el texto y el loader */
 }
