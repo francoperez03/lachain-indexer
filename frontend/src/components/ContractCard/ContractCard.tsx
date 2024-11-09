@@ -41,7 +41,7 @@ const ContractCard: React.FC<ContractCardProps> = ({ contract }) => {
           <span>transacciones</span> {contract.transactionsCount}
         </p>
       </div>
-      <Link to={`/contracts/${contract.address}`} className="contract-card-details">
+      <Link to={`/contracts/${contract.address}/abi-events`} className="contract-card-details">
         Ver Detalles
       </Link>
     </div>
