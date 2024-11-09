@@ -124,3 +124,6 @@
   color: #51FF00;
   font-size: 0.85rem;
 }
+.loader {
+  margin-left: 8px; /* Ajusta el margen si deseas espacio entre el texto y el loader */
+}

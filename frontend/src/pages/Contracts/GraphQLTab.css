@@ -29,12 +29,17 @@
   width: 100%;
   padding: 10px;
   background-color: #0C0C0B;
-  color: #FFFFFF;
   border: 1px solid #FFFFFF;
   border-radius: 8px;
   font-family: 'Orbitron', sans-serif;
   font-size: 1rem;
   resize: vertical;
+}
+
+.graphql-editor {
+  border: 1px solid #FFFFFF;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .graphql-button {
