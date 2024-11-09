@@ -4,7 +4,7 @@ import './loader.css';
 const Loader: React.FC<{ className?: string; size?: number }> = ({ className = '', size = 16 }) => (
   <img
     src="../../assets/images/search-icon.webp"
-    alt="Loading..."
+    alt="."
     className={`loader-icon ${className}`}
     style={{
       width: size,
