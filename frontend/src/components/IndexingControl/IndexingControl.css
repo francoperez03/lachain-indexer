@@ -38,6 +38,7 @@
   border-radius: 0;
   background-color: #0C0C0B;
   transition: background-color 0.3s ease;
+  font-family: 'Orbitron', sans-serif;
 }
 
 .indexing-button:hover {
@@ -45,6 +46,7 @@
 }
 
 .delete-button {
+  font-family: 'Orbitron', sans-serif;
   background-color: red;
   color: white;
   padding: 8px 16px;
