@@ -24,40 +24,40 @@ export class ContractService {
     private blockchainService: BlockchainService,
   ) {}
 
-  async onModuleInit() {
-    const processes = await this.contractProcessRepository.find({
-      where: { status: ProcessStatus.COMPLETED },
-      relations: ['contract'],
-    });
-    for (const process of processes) {
-      const contract = process.contract;
+  // async onModuleInit() {
+  // const processes = await this.contractProcessRepository.find({
+  //   where: { status: ProcessStatus.COMPLETED },
+  //   relations: ['contract'],
+  // });
+  // for (const process of processes) {
+  // const contract = process.contract;
 
-      if (!contract.abi) {
-        console.warn(`The contract ${contract.address} doesn't have ABI.`);
-        continue;
-      }
+  // if (!contract.abi) {
+  //   console.warn(`The contract ${contract.address} doesn't have ABI.`);
+  //   continue;
+  // }
 
-      if (!process.startBlock) {
-        console.warn(
-          `The contract ${contract.address} doesn't define a startBlock.`,
-        );
-        continue;
-      }
+  // if (!process.startBlock) {
+  //   console.warn(
+  //     `The contract ${contract.address} doesn't define a startBlock.`,
+  //   );
+  //   continue;
+  // }
 
-      // this.blockchainService.startListeningToContractEvents(
-      //   contract,
-      //   async () => {
-      //     const updatedProcess = await this.contractProcessRepository.findOne({
-      //       where: { id: process.id },
-      //     });
-      //     if (updatedProcess) {
-      //       updatedProcess.status = ProcessStatus.LISTENING;
-      //       await this.contractProcessRepository.save(updatedProcess);
-      //     }
-      //   },
-      // );
-    }
-  }
+  // this.blockchainService.startListeningToContractEvents(
+  //   contract,
+  //   async () => {
+  //     const updatedProcess = await this.contractProcessRepository.findOne({
+  //       where: { id: process.id },
+  //     });
+  //     if (updatedProcess) {
+  //       updatedProcess.status = ProcessStatus.LISTENING;
+  //       await this.contractProcessRepository.save(updatedProcess);
+  //     }
+  //   },
+  // );
+  // }
+  // }
 
   async onApplicationShutdown() {
     await this.stopListeningToContracts();
