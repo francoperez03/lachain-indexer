@@ -1,6 +1,8 @@
+// GraphQLTab.tsx
 import React, { useState } from 'react';
 import { executeGraphQLQuery } from '../../services/graphQLService';
 import { Contract } from '../../types/contract';
+import './GraphQLTab.css';
 
 interface GraphQLTabProps {
   contract: Contract;
@@ -28,27 +30,26 @@ const GraphQLTab: React.FC<GraphQLTabProps> = ({ contract }) => {
       const data = await executeGraphQLQuery(query);
       setResult(JSON.stringify(data, null, 2));
     } catch (err) {
-      console.error(err)
+      console.error(err);
       setError('Error al ejecutar la consulta GraphQL.');
     }
   };
 
   return (
-    <div>
-      <h3>Consulta GraphQL</h3>
-      {error && <p>{error}</p>}
+    <div className="graphql-tab">
+      <h3 className="graphql-title">Consulta GraphQL</h3>
+      {error && <p className="graphql-error">{error}</p>}
       <textarea
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         rows={10}
-        cols={80}
+        className="graphql-textarea"
       />
-      <br />
-      <button onClick={handleExecute}>Ejecutar</button>
+      <button onClick={handleExecute} className="graphql-button">Ejecutar</button>
       {result && (
-        <div>
-          <h4>Resultado:</h4>
-          <pre>{result}</pre>
+        <div className="graphql-result">
+          <h4 className="graphql-result-title">Resultado:</h4>
+          <pre className="graphql-result-content">{result}</pre>
         </div>
       )}
     </div>
