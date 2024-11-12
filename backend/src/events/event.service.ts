@@ -73,20 +73,6 @@ export class EventService {
     });
   }
 
-  async getEventLogsByContractAddress(contractAddress: string) {
-    return await this.eventLogRepository
-      .createQueryBuilder('eventLog')
-      .leftJoinAndSelect('eventLog.event', 'event')
-      .leftJoinAndSelect('eventLog.eventParameters', 'eventParameter')
-      .innerJoin(
-        'event.contract',
-        'contract',
-        'contract.address = :contractAddress',
-        { contractAddress },
-      )
-      .getMany();
-  }
-
   async createEventLog(
     eventData: LogDescription,
     log: ethers.Log,
@@ -187,5 +173,53 @@ export class EventService {
     }
 
     return await query.getMany();
+  }
+
+  async getEventLogsPaginated(address: string, page: number, limit: number) {
+    const [eventLogs, total] = await this.eventLogRepository
+      .createQueryBuilder('eventLog')
+      .leftJoinAndSelect('eventLog.event', 'event')
+      .leftJoinAndSelect('eventLog.eventParameters', 'eventParameter')
+      .innerJoin('event.contract', 'contract', 'contract.address = :address', {
+        address,
+      })
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    const formattedEventLogs = eventLogs.map((eventLog) => ({
+      eventid: eventLog.event.id,
+      eventName: eventLog.event.name,
+      signature: eventLog.event.signature,
+      id: eventLog.id,
+      blockNumber: eventLog.blockNumber,
+      logIndex: eventLog.logIndex,
+      transactionHash: eventLog.transactionHash,
+      createdAt: eventLog.createdAt,
+      parameters: eventLog.eventParameters.map((param) => ({
+        id: param.id,
+        name: param.name,
+        value: param.value,
+        createdAt: param.createdAt,
+      })),
+    }));
+
+    return {
+      data: formattedEventLogs,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async countEventLogsByContractId(contractId: number): Promise<number> {
+    return await this.eventLogRepository
+      .createQueryBuilder('eventLog')
+      .innerJoin('eventLog.event', 'event')
+      .innerJoin('event.contract', 'contract', 'contract.id = :contractId', {
+        contractId,
+      })
+      .getCount();
   }
 }

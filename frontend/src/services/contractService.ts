@@ -1,6 +1,7 @@
 import apiClient from './apiClient';
 import { Contract, ContractItem } from '../types/contract';
 import { EventLog } from '../types/event';
+import { Transaction } from '@/types/transaction';
 
 export const getContracts = async (): Promise<ContractItem[]> => {
   const response = await apiClient.get<ContractItem[]>('/contracts');
@@ -27,13 +28,6 @@ export const addContract = async (contractData: Partial<Contract>): Promise<Cont
   }
 };
 
-export const getEventLogsByContractAddress = async (
-  address: string
-): Promise<EventLog[]> => {
-  const response = await apiClient.get<EventLog[]>(`/contracts/${address}/event-logs`);
-  return response.data;
-};
-
 export const deleteContractByAddress = async (address: string): Promise<void> => {
   await apiClient.delete(`/contracts/${address}`);
 };  
@@ -48,3 +42,25 @@ export const previewLogs = async (address: string, startBlock: bigint) => {
   });
   return response.data;
 };  
+
+export const getEventLogsByContractAddress = async (
+  address: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<{ data: EventLog[]; total: number; page: number; limit: number; totalPages: number }> => {
+  const response = await apiClient.get(`/contracts/${address}/event-logs`, {
+    params: { page, limit },
+  });
+  return response.data;
+};
+
+export const getTransactionsByContractAddress = async (
+  address: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<{ data: Transaction[]; total: number; page: number; limit: number; totalPages: number }> => {
+  const response = await apiClient.get(`/contracts/${address}/transactions`, {
+    params: { page, limit },
+  });
+  return response.data;
+};

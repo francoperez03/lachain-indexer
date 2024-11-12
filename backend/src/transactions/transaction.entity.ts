@@ -54,11 +54,11 @@ export class Transaction {
   gasPrice: string;
 
   @Field()
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', nullable: true })
   maxPriorityFeePerGas: string;
 
   @Field()
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', nullable: true })
   maxFeePerGas: string;
 
   @Field()

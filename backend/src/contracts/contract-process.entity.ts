@@ -14,6 +14,7 @@ export enum ProcessStatus {
   INDEXING = 'INDEXING',
   COMPLETED = 'COMPLETED',
   COMPLETED_WITH_ISSUES = 'COMPLETED_WITH_ISSUES',
+  FAILED = 'FAILED',
 }
 
 @Entity('contract_processes')
@@ -26,11 +27,7 @@ export class ContractProcess {
   })
   contract: Contract;
 
-  @Column({
-    type: 'enum',
-    enum: ProcessStatus,
-    default: ProcessStatus.INDEXING,
-  })
+  @Column({ nullable: true })
   status: ProcessStatus;
 
   @Column({ type: 'bigint', nullable: true })

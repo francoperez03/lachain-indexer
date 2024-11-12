@@ -14,6 +14,7 @@ import { AddContractAbiDto } from './dto/add-contract-abi.dto';
 import { IndexContractEventsDto } from './dto/index-contract-events.dto';
 import { ProgressGateway } from './progress.gateway';
 import { ProcessChunk } from './process-chunks.entity';
+import { TransactionService } from 'src/transactions/transaction.service';
 
 @Injectable()
 export class ContractService {
@@ -25,6 +26,7 @@ export class ContractService {
     @InjectRepository(ProcessChunk)
     private readonly processChunkRepository: Repository<ProcessChunk>,
     private eventService: EventService,
+    private transactionService: TransactionService,
     private blockchainService: BlockchainService,
     private readonly progressGateway: ProgressGateway,
   ) {}
@@ -80,7 +82,6 @@ export class ContractService {
   }
 
   async findAll() {
-    // Primera consulta: Obtener contratos con conteos de eventos y transacciones
     const contracts: any = await this.contractRepository
       .createQueryBuilder('contract')
       .loadRelationCountAndMap('contract.eventsCount', 'contract.events')
@@ -125,7 +126,6 @@ export class ContractService {
   async findByAddress(address: string) {
     const contract = await this.contractRepository
       .createQueryBuilder('contract')
-      .leftJoinAndSelect('contract.transactions', 'transaction')
       .leftJoinAndSelect('contract.events', 'event')
       .leftJoinAndSelect('contract.processes', 'processes')
       .where('contract.address = :address', { address })
@@ -135,36 +135,24 @@ export class ContractService {
       throw new NotFoundException('Contract not found');
     }
 
-    const eventLogsResponse =
-      await this.eventService.getEventLogsByContractAddress(address);
-
-    const eventLogs = eventLogsResponse.map((eventLog) => ({
-      eventid: eventLog.event.id,
-      eventName: eventLog.event.name,
-      signature: eventLog.event.signature,
-      id: eventLog.id,
-      blockNumber: eventLog.blockNumber,
-      logIndex: eventLog.logIndex,
-      transactionHash: eventLog.transactionHash,
-      createdAt: eventLog.createdAt,
-      parameters: eventLog.eventParameters.map((param) => ({
-        id: param.id,
-        name: param.name,
-        value: param.value,
-        createdAt: param.createdAt,
-      })),
-    }));
+    const transactionCount = await this.transactionService.countByContractId(
+      contract.id,
+    );
+    const eventLogCount = await this.eventService.countEventLogsByContractId(
+      contract.id,
+    );
 
     return {
       id: contract.id,
       address: contract.address,
       name: contract.name,
       abi: contract.abi,
+      status: contract.status,
       createdAt: contract.createdAt,
       events: contract.events,
-      eventLogs,
-      transactions: contract.transactions,
       processes: contract.processes,
+      transactionCount,
+      eventLogCount,
     };
   }
 
@@ -195,17 +183,17 @@ export class ContractService {
       const contract = await this.contractRepository.findOne({
         where: { address },
         relations: [
+          'transactions',
           'events',
           'events.eventLogs',
           'events.eventLogs.eventParameters',
-          'transactions',
           'processes',
         ],
       });
-      console.log({ contract });
       if (!contract) {
         throw new NotFoundException('Contract not found');
       }
+      console.log('Deleting contract: ', contract.address);
       await this.contractRepository.remove(contract);
     } catch (error) {
       console.error('Error deleting contract:', error);
@@ -242,71 +230,85 @@ export class ContractService {
   async startIndexing(createContractDto: IndexContractEventsDto) {
     const PAGE_SIZE = 500_000n;
     const { address, startBlock } = createContractDto;
-    const contract = await this.contractRepository.findOne({
-      where: { address },
-    });
-    if (!contract) {
-      throw new NotFoundException('Contract not found');
+    try {
+      const contract = await this.contractRepository.findOne({
+        where: { address },
+      });
+      if (!contract) {
+        throw new NotFoundException('Contract not found');
+      }
+      contract.status = ContractStatus.INDEXING;
+
+      const process: ContractProcess = this.contractProcessRepository.create({
+        status: ProcessStatus.INDEXING,
+        contract,
+        startBlock: BigInt(startBlock),
+      });
+      await this.contractProcessRepository.save(process);
+      console.log({ address, startBlock });
+
+      await this.blockchainService.startIndexingContractEvents(
+        contract,
+        startBlock,
+        PAGE_SIZE,
+        async () => {
+          const updatedProcess = await this.contractProcessRepository.findOne({
+            where: {
+              contract: { id: contract.id },
+              status: ProcessStatus.INDEXING,
+            },
+          });
+          if (updatedProcess) {
+            updatedProcess.status = ProcessStatus.COMPLETED;
+            await this.contractProcessRepository.save(updatedProcess);
+
+            contract.status = ContractStatus.PAUSED;
+            await this.contractRepository.save(contract);
+          }
+        },
+        async (chunkData) => {
+          const { fromBlock, toBlock, status } = chunkData;
+
+          const processChunk = this.processChunkRepository.create({
+            contractProcess: process,
+            fromBlock,
+            toBlock,
+            status,
+          });
+          await this.processChunkRepository.save(processChunk);
+        },
+        (percentage) => {
+          this.progressGateway.sendProgressUpdate(percentage);
+        },
+      );
+
+      return {
+        message: 'Contract updated with ABI, and event listening started',
+      };
+    } catch (error) {
+      console.error('Error in startIndexing:', error);
+
+      const contract = await this.contractRepository.findOne({
+        where: { address: createContractDto.address },
+      });
+      if (contract) {
+        contract.status = ContractStatus.FAILED;
+        await this.contractRepository.save(contract);
+      }
+
+      const process = await this.contractProcessRepository.findOne({
+        where: {
+          contract: { id: contract?.id },
+          status: ProcessStatus.INDEXING,
+        },
+      });
+      if (process) {
+        process.status = ProcessStatus.FAILED;
+        await this.contractProcessRepository.save(process);
+      }
+
+      throw new Error('Failed to start indexing contract');
     }
-    contract.status = ContractStatus.INDEXING;
-
-    const process: ContractProcess = this.contractProcessRepository.create({
-      status: ProcessStatus.INDEXING,
-      contract,
-      startBlock: BigInt(startBlock),
-    });
-    await this.contractProcessRepository.save(process);
-    console.log({ address, startBlock });
-    this.blockchainService.startIndexingContractEvents(
-      contract,
-      startBlock,
-      PAGE_SIZE,
-      async () => {
-        const updatedProcess = await this.contractProcessRepository.findOne({
-          where: {
-            contract: { id: contract.id },
-            status: ProcessStatus.INDEXING,
-          },
-        });
-        if (updatedProcess) {
-          updatedProcess.status = ProcessStatus.COMPLETED;
-          await this.contractProcessRepository.save(updatedProcess);
-
-          contract.status = ContractStatus.PAUSED;
-          await this.contractRepository.save(contract);
-        }
-      },
-      async (chunkData) => {
-        const { fromBlock, toBlock, status } = chunkData;
-
-        const processChunk = this.processChunkRepository.create({
-          contractProcess: process,
-          fromBlock,
-          toBlock,
-          status,
-        });
-        await this.processChunkRepository.save(processChunk);
-      },
-      (percentage) => {
-        this.progressGateway.sendProgressUpdate(percentage);
-      },
-    );
-
-    // await this.blockchainService.startListeningToContractEvents(
-    //   contract,
-    //   async () => {
-    //     const updatedProcess = await this.contractProcessRepository.findOne({
-    //       where: { id: process.id },
-    //     });
-    //     if (updatedProcess) {
-    //       updatedProcess.status = ProcessStatus.LISTENING;
-    //       await this.contractProcessRepository.save(updatedProcess);
-    //     }
-    //   },
-    // );
-    return {
-      message: 'Contract updated with ABI, and event listening started',
-    };
   }
 
   async previewIndexing(address: string, startBlock: number): Promise<number> {

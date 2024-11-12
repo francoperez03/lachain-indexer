@@ -44,7 +44,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({ contract }) => {
         <Route path="abi-events" element={<AbiAndEventsTab contract={contract} />} />
         <Route path="graphql" element={<GraphQLTab contract={contract} />} />
         <Route path="event-logs" element={<EventLogsTab contract={contract} />} />
-        <Route path="transactions" element={<TransactionsTab transactions={contract.transactions || []} />} />
+        <Route path="transactions" element={<TransactionsTab contract={contract} />} />
       </Routes>
     </div>
   );

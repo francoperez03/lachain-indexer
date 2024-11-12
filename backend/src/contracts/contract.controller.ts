@@ -4,6 +4,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -12,10 +14,16 @@ import { ContractService } from './contract.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { IndexContractEventsDto } from './dto/index-contract-events.dto';
 import { AddContractAbiDto } from './dto/add-contract-abi.dto';
+import { EventService } from 'src/events/event.service';
+import { TransactionService } from 'src/transactions/transaction.service';
 
 @Controller('contracts')
 export class ContractController {
-  constructor(private readonly contractService: ContractService) {}
+  constructor(
+    private readonly contractService: ContractService,
+    private readonly eventService: EventService,
+    private readonly transactionService: TransactionService,
+  ) {}
 
   @Get()
   async findAll() {
@@ -52,12 +60,67 @@ export class ContractController {
 
   @Post('index')
   async startListening(@Body() indexListeningDto: IndexContractEventsDto) {
-    return await this.contractService.startIndexing(indexListeningDto);
+    try {
+      return await this.contractService.startIndexing(indexListeningDto);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Delete(':address')
   async deleteContract(@Param('address') address: string) {
     await this.contractService.deleteContract(address);
     return { message: 'Contract and associated data deleted successfully' };
+  }
+
+  @Get(':address/event-logs')
+  async getEventLogs(
+    @Param('address') address: string,
+    @Query('page') page = '1',
+    @Query('limit') limit = '10',
+  ) {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    if (
+      isNaN(pageNumber) ||
+      isNaN(limitNumber) ||
+      pageNumber < 1 ||
+      limitNumber < 1
+    ) {
+      throw new BadRequestException('Invalid pagination parameters');
+    }
+
+    return await this.eventService.getEventLogsPaginated(
+      address,
+      pageNumber,
+      limitNumber,
+    );
+  }
+
+  // Endpoint para obtener transactions paginados
+  @Get(':address/transactions')
+  async getTransactions(
+    @Param('address') address: string,
+    @Query('page') page = '1',
+    @Query('limit') limit = '10',
+  ) {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    if (
+      isNaN(pageNumber) ||
+      isNaN(limitNumber) ||
+      pageNumber < 1 ||
+      limitNumber < 1
+    ) {
+      throw new BadRequestException('Invalid pagination parameters');
+    }
+
+    return await this.transactionService.getTransactionsPaginated(
+      address,
+      pageNumber,
+      limitNumber,
+    );
   }
 }

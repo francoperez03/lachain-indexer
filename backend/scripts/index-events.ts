@@ -52,8 +52,8 @@ async function run() {
     async () => {
       console.log('FINALIZADO');
     },
-    async () => {
-      console.log('FINALIZADO');
+    async (percentage: number) => {
+      console.log({ percentage });
     },
   );
 

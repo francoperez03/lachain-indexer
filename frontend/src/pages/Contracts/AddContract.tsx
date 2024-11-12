@@ -11,15 +11,16 @@ const AddContract: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isAddressValid, setIsAddressValid] = useState<boolean>(true);
   const [isAbiValid, setIsAbiValid] = useState<boolean>(true);
+  const [adding, setAdding] = useState<'idle' | 'adding' | 'added'>('idle');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
+  
     const addressValid = /^0x[a-fA-F0-9]{40}$/.test(address);
     setIsAddressValid(addressValid);
-
+  
     let abiValid = true;
     try {
       JSON.parse(abi);
@@ -27,22 +28,28 @@ const AddContract: React.FC = () => {
       abiValid = false;
     }
     setIsAbiValid(abiValid);
-
+  
     if (!addressValid || !abiValid) {
       setError('Corrige los errores antes de enviar el formulario.');
       return;
     }
-
+  
     try {
+      setAdding('adding');
       const abiJson = JSON.parse(abi);
       const contractData: Partial<Contract> = { name, address, abi: abiJson };
       await addContract(contractData);
-      navigate('/contracts');
+      setAdding('added');
+      setTimeout(() => {
+        navigate('/contracts');
+      }, 1000);
     } catch (err) {
       console.log(err);
       setError('Error al agregar el contrato. Asegúrate de que el ABI es un JSON válido.');
+      setAdding('idle');
     }
   };
+  
 
   return (
     <div className="add-contract-container">
@@ -90,7 +97,9 @@ const AddContract: React.FC = () => {
           )}
         </div>
 
-        <button type="submit" className="add-contract-button">Agregar Contrato</button>
+        <button type="submit" className="add-contract-button" disabled={adding !== 'idle'}>
+          {adding === 'adding' ? 'Agregando...' : adding === 'added' ? 'Agregado!' : 'Agregar Contrato'}
+        </button>
       </form>
     </div>
   );

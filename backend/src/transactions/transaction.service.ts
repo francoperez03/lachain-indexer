@@ -82,4 +82,28 @@ export class TransactionService {
     });
     return await this.transactionRepository.save(transaction);
   }
+
+  async getTransactionsPaginated(address: string, page: number, limit: number) {
+    const [transactions, total] = await this.transactionRepository.findAndCount(
+      {
+        where: { contract: { address } },
+        skip: (page - 1) * limit,
+        take: limit,
+      },
+    );
+    return {
+      data: transactions,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async countByContractId(contractId: number): Promise<number> {
+    return await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .where('transaction.contractId = :contractId', { contractId })
+      .getCount();
+  }
 }

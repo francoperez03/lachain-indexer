@@ -49,11 +49,7 @@ export class Contract {
   createdAt: Date;
 
   @Field(() => ContractStatus)
-  @Column({
-    type: 'enum',
-    enum: ContractStatus,
-    default: ContractStatus.CREATED,
-  })
+  @Column({ nullable: true })
   status: ContractStatus;
 
   @Field(() => [Event], { nullable: true })

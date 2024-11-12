@@ -43,7 +43,7 @@ export class EventLog {
   createdAt: Date;
 
   @Field(() => Event)
-  @ManyToOne(() => Event, (event) => event.eventLogs)
+  @ManyToOne(() => Event, (event) => event.eventLogs, { onDelete: 'CASCADE' })
   event: Event;
 
   @Field(() => Transaction)

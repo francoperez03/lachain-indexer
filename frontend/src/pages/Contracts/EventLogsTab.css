@@ -1,0 +1,50 @@
+/* EventLogsTab.css */
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.pagination-item {
+  list-style: none; /* Quita los puntos de enumeración */
+}
+
+.pagination-content {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre los elementos de paginación */
+}
+
+.pagination-link,
+.pagination-previous,
+.pagination-next {
+  color: #51FF00;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid #51FF00;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.pagination-link:hover,
+.pagination-previous:hover,
+.pagination-next:hover {
+  background-color: rgba(81, 255, 0, 0.2);
+}
+
+.pagination-link-active {
+  background-color: #51FF00;
+  color: #0C0C0B;
+}
+
+.pagination-ellipsis {
+  color: #FFFFFF;
+  font-size: 1rem;
+  padding: 8px;
+}

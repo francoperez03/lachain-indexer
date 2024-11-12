@@ -16,7 +16,6 @@ export class ProgressGateway implements OnGatewayConnection {
   }
 
   sendProgressUpdate(percentage: number) {
-    // Broadcast a message to all connected clients
     this.server.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(

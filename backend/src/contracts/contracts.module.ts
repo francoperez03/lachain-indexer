@@ -8,11 +8,13 @@ import { BlockchainModule } from '../blockchain/blockchain.module';
 import { ContractProcess } from './contract-process.entity';
 import { ProgressGateway } from './progress.gateway';
 import { ProcessChunk } from './process-chunks.entity';
+import { TransactionsModule } from 'src/transactions/transactions.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Contract, ContractProcess, ProcessChunk]),
     EventsModule,
+    TransactionsModule,
     BlockchainModule,
   ],
   controllers: [ContractController],
