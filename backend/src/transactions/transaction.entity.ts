@@ -17,8 +17,8 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => String)
-  @Column({ type: 'bigint' })
+  @Field(() => Int)
+  @Column({ type: 'integer', nullable: true })
   blockNumber: number;
 
   @Field()
@@ -41,8 +41,8 @@ export class Transaction {
   @Column()
   from: string;
 
-  @Field(() => String)
-  @Column({ type: 'bigint' })
+  @Field(() => Int)
+  @Column({ nullable: true })
   nonce: number;
 
   @Field()

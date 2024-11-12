@@ -5,16 +5,15 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Contract } from './contract.entity';
+import { ProcessChunk } from './process-chunks.entity';
 
 export enum ProcessStatus {
-  CREATED = 'CREATED',
-  ABI_ADDED = 'ABI_ADDED',
   INDEXING = 'INDEXING',
-  LISTENING = 'LISTENING',
-  FAILED = 'FAILED',
   COMPLETED = 'COMPLETED',
+  COMPLETED_WITH_ISSUES = 'COMPLETED_WITH_ISSUES',
 }
 
 @Entity('contract_processes')
@@ -30,16 +29,22 @@ export class ContractProcess {
   @Column({
     type: 'enum',
     enum: ProcessStatus,
-    default: ProcessStatus.CREATED,
+    default: ProcessStatus.INDEXING,
   })
   status: ProcessStatus;
 
-  @Column({ nullable: true })
-  startBlock: number;
+  @Column({ type: 'bigint', nullable: true })
+  startBlock: bigint;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => ProcessChunk, (chunk) => chunk.contractProcess, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  chunks: ProcessChunk[];
 }

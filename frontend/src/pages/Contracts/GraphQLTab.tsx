@@ -3,6 +3,8 @@ import MonacoEditor from '@monaco-editor/react';
 import { executeGraphQLQuery } from '../../services/graphQLService';
 import { Contract } from '../../types/contract';
 import './GraphQLTab.css';
+import JsonView from '@uiw/react-json-view';
+import { githubDarkTheme } from '@uiw/react-json-view/githubDark';
 
 interface GraphQLTabProps {
   contract: Contract;
@@ -10,11 +12,15 @@ interface GraphQLTabProps {
 
 const GraphQLTab: React.FC<GraphQLTabProps> = ({ contract }) => {
   const [query, setQuery] = useState<string>(
-    `{
-  eventLogs(contractAddress: "${contract.address}") {
+    `query {
+  eventLogs(filter: { contractAddress: "${contract.address}", eventName: "Transfer", signature: "0xSignature" }) {
     id
-    eventName
-    parameters {
+    blockNumber
+    transactionHash
+    event {
+      name
+    }
+    eventParameters {
       name
       value
     }
@@ -57,7 +63,9 @@ const GraphQLTab: React.FC<GraphQLTabProps> = ({ contract }) => {
       {result && (
         <div className="graphql-result">
           <h4 className="graphql-result-title">Resultado:</h4>
-          <pre className="graphql-result-content">{result}</pre>
+          <pre className="graphql-result-content">
+            <JsonView value={contract.abi} style={githubDarkTheme}  />
+          </pre>
         </div>
       )}
     </div>

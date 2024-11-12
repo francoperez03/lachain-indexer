@@ -28,8 +28,8 @@
   padding: 8px 16px;
   border-radius: 8px;
   transition: box-shadow 0.3s ease;
-  min-width: 830px; /* Define el ancho máximo de las tarjetas */
-  margin: 0 auto; /* Centra las tarjetas */
+  min-width: 830px;
+  margin: 0 auto;
 }
 
 .event-item:hover {
@@ -55,8 +55,8 @@
   background-color: #0C0C0B;
   border: 1px solid #FFFFFF;
   border-radius: 8px;
-  min-width: 650px; /* Define el ancho máximo de las tarjetas */
-  max-width: 830px; /* Define el ancho máximo del contenedor ABI */
+  min-width: 650px;
+  max-width: 830px;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: auto;
@@ -64,7 +64,6 @@
 
 .abi-title {
   gap: 12px;
-
   font-size: 1.3rem;
   color: #51FF00;
   font-weight: bold;

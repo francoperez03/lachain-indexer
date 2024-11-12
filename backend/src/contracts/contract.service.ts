@@ -5,13 +5,15 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Contract } from './contract.entity';
+import { Contract, ContractStatus } from './contract.entity';
 import { EventService } from '../events/event.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { BlockchainService } from '../blockchain/blockchain.service';
 import { ContractProcess, ProcessStatus } from './contract-process.entity';
 import { AddContractAbiDto } from './dto/add-contract-abi.dto';
 import { IndexContractEventsDto } from './dto/index-contract-events.dto';
+import { ProgressGateway } from './progress.gateway';
+import { ProcessChunk } from './process-chunks.entity';
 
 @Injectable()
 export class ContractService {
@@ -20,8 +22,11 @@ export class ContractService {
     private contractRepository: Repository<Contract>,
     @InjectRepository(ContractProcess)
     private readonly contractProcessRepository: Repository<ContractProcess>,
+    @InjectRepository(ProcessChunk)
+    private readonly processChunkRepository: Repository<ProcessChunk>,
     private eventService: EventService,
     private blockchainService: BlockchainService,
+    private readonly progressGateway: ProgressGateway,
   ) {}
 
   // async onModuleInit() {
@@ -64,14 +69,14 @@ export class ContractService {
   }
 
   private async stopListeningToContracts() {
-    const processes = await this.contractProcessRepository.find({
-      where: { status: ProcessStatus.LISTENING },
-      relations: ['contract'],
-    });
-    for (const process of processes) {
-      process.status = ProcessStatus.COMPLETED;
-      await this.contractProcessRepository.save(process);
-    }
+    // const processes = await this.contractProcessRepository.find({
+    //   where: { status: ProcessStatus.LISTENING },
+    //   relations: ['contract'],
+    // });
+    // for (const process of processes) {
+    //   process.status = ProcessStatus.COMPLETED;
+    //   await this.contractProcessRepository.save(process);
+    // }
   }
 
   async findAll() {
@@ -175,14 +180,12 @@ export class ContractService {
       );
     }
 
-    const contract = this.contractRepository.create({ name, address });
-    const savedContract = await this.contractRepository.save(contract);
-
-    const process = this.contractProcessRepository.create({
-      contract: savedContract,
-      status: ProcessStatus.CREATED,
+    const contract = this.contractRepository.create({
+      name,
+      address,
+      status: ContractStatus.CREATED,
     });
-    await this.contractProcessRepository.save(process);
+    const savedContract = await this.contractRepository.save(contract);
 
     return savedContract;
   }
@@ -212,7 +215,7 @@ export class ContractService {
 
   async addAbiToContract(
     createContractDto: AddContractAbiDto,
-  ): Promise<ContractProcess> {
+  ): Promise<Contract> {
     const { address, abi } = createContractDto;
 
     const contract = await this.contractRepository.findOne({
@@ -223,6 +226,7 @@ export class ContractService {
     }
 
     contract.abi = abi;
+    contract.status = ContractStatus.ABI_ADDED;
     await this.contractRepository.save(contract);
 
     for (const item of abi) {
@@ -232,23 +236,11 @@ export class ContractService {
         await this.eventService.createEvent(item.name, signature, contract);
       }
     }
-
-    const process = await this.contractProcessRepository.findOne({
-      where: { contract: { id: contract.id }, status: ProcessStatus.CREATED },
-    });
-
-    if (process) {
-      process.status = ProcessStatus.ABI_ADDED;
-      await this.contractProcessRepository.save(process);
-      return process;
-    } else {
-      throw new BadRequestException(
-        'No initial process found for the contract',
-      );
-    }
+    return contract;
   }
 
   async startIndexing(createContractDto: IndexContractEventsDto) {
+    const PAGE_SIZE = 500_000n;
     const { address, startBlock } = createContractDto;
     const contract = await this.contractRepository.findOne({
       where: { address },
@@ -256,18 +248,19 @@ export class ContractService {
     if (!contract) {
       throw new NotFoundException('Contract not found');
     }
-    const process = await this.contractProcessRepository.findOne({
-      where: { contract: { id: contract.id }, status: ProcessStatus.ABI_ADDED },
+    contract.status = ContractStatus.INDEXING;
+
+    const process: ContractProcess = this.contractProcessRepository.create({
+      status: ProcessStatus.INDEXING,
+      contract,
+      startBlock: BigInt(startBlock),
     });
-    if (!process) {
-      throw new NotFoundException('Process not found for contract');
-    }
-    process.status = ProcessStatus.INDEXING;
     await this.contractProcessRepository.save(process);
     console.log({ address, startBlock });
-    await this.blockchainService.startIndexingContractEvents(
+    this.blockchainService.startIndexingContractEvents(
       contract,
       startBlock,
+      PAGE_SIZE,
       async () => {
         const updatedProcess = await this.contractProcessRepository.findOne({
           where: {
@@ -278,7 +271,24 @@ export class ContractService {
         if (updatedProcess) {
           updatedProcess.status = ProcessStatus.COMPLETED;
           await this.contractProcessRepository.save(updatedProcess);
+
+          contract.status = ContractStatus.PAUSED;
+          await this.contractRepository.save(contract);
         }
+      },
+      async (chunkData) => {
+        const { fromBlock, toBlock, status } = chunkData;
+
+        const processChunk = this.processChunkRepository.create({
+          contractProcess: process,
+          fromBlock,
+          toBlock,
+          status,
+        });
+        await this.processChunkRepository.save(processChunk);
+      },
+      (percentage) => {
+        this.progressGateway.sendProgressUpdate(percentage);
       },
     );
 

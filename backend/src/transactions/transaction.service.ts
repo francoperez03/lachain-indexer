@@ -49,22 +49,25 @@ export class TransactionService {
       data,
       value,
       chainId,
-      signature: { r, s, yParity = 0 },
     } = tx;
+    const r = tx.signature?.r ?? '';
+    const s = tx.signature?.s ?? '';
+    const yParity = tx.signature?.yParity ?? 0;
     const existingTransaction = await this.transactionRepository.findOne({
       where: { hash },
     });
     if (existingTransaction) {
       return existingTransaction;
     }
+
     const transaction: Transaction = this.transactionRepository.create({
-      blockNumber: blockNumber,
+      blockNumber,
       blockHash,
       hash,
       type,
       to,
       from,
-      nonce: nonce,
+      nonce,
       gasLimit: gasLimit.toString(),
       gasPrice: gasPrice?.toString() ?? null,
       maxPriorityFeePerGas: maxPriorityFeePerGas?.toString() ?? null,
@@ -77,7 +80,6 @@ export class TransactionService {
       yParity,
       contract,
     });
-    transaction.contract = contract;
     return await this.transactionRepository.save(transaction);
   }
 }

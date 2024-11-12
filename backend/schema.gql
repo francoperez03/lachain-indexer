@@ -31,13 +31,13 @@ type EventLog {
 
 type Transaction {
   id: Int!
-  blockNumber: String!
+  blockNumber: Int!
   blockHash: String!
   hash: String!
   type: Int!
   to: String!
   from: String!
-  nonce: String!
+  nonce: Int!
   gasLimit: String!
   gasPrice: String!
   maxPriorityFeePerGas: String!
@@ -59,8 +59,19 @@ type Contract {
   name: String
   abi: String
   createdAt: DateTime!
+  status: ContractStatus!
   events: [Event!]
   transactions: [Transaction!]
+}
+
+"""Enum representing the status of a process chunk"""
+enum ContractStatus {
+  CREATED
+  ABI_ADDED
+  INDEXING
+  LISTENING
+  FAILED
+  PAUSED
 }
 
 type Event {
@@ -73,6 +84,12 @@ type Event {
 }
 
 type Query {
-  eventLogs: [EventLog!]!
+  eventLogs(filter: EventLogFilter): [EventLog!]!
   eventLog(id: Int!): EventLog!
+}
+
+input EventLogFilter {
+  contractAddress: String
+  eventName: String
+  signature: String
 }

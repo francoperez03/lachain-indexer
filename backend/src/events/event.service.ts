@@ -8,6 +8,7 @@ import { EventParameter } from './event-parameter.entity';
 import { Contract } from '../contracts/contract.entity';
 import { Transaction } from '../transactions/transaction.entity';
 import { ethers, LogDescription } from 'ethers';
+import { EventLogFilter } from './event-log.resolver';
 
 @Injectable()
 export class EventService {
@@ -158,5 +159,33 @@ export class EventService {
     return this.eventLogRepository.find({
       relations: ['event', 'eventParameters', 'transaction'],
     });
+  }
+
+  async findEventLogsWithFilter(filter: EventLogFilter): Promise<EventLog[]> {
+    const query = this.eventLogRepository
+      .createQueryBuilder('eventLog')
+      .leftJoinAndSelect('eventLog.event', 'event')
+      .leftJoinAndSelect('eventLog.eventParameters', 'eventParameter')
+      .leftJoinAndSelect('event.contract', 'contract');
+
+    if (filter.contractAddress) {
+      query.andWhere('contract.address = :contractAddress', {
+        contractAddress: filter.contractAddress,
+      });
+    }
+
+    if (filter.eventName) {
+      query.andWhere('event.name = :eventName', {
+        eventName: filter.eventName,
+      });
+    }
+
+    if (filter.signature) {
+      query.andWhere('eventLog.signature = :signature', {
+        signature: filter.signature,
+      });
+    }
+
+    return await query.getMany();
   }
 }
