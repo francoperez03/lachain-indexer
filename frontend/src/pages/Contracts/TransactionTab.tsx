@@ -111,7 +111,7 @@ const TransactionsTab: React.FC<TransactionsTabProps> = ({ contract }) => {
             <div key={tx.id} className="transaction-item">
               <div className="transaction-details">
                 <p>
-                  <strong>Hash de Transacción:</strong> 
+                  <strong>Hash de Transacción: </strong> 
                   <a 
                     href={`https://explorer.lachain.network/tx/${tx.hash}`} 
                     target="_blank" 

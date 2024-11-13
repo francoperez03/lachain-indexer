@@ -27,11 +27,19 @@
   margin-bottom: 8px; /* Espacio entre la firma y los detalles */
 }
 
+.event-signature strong {
+  color: #FFFFFF;
+}
+
 .event-details {
   display: flex;
   gap: 20px;
   font-size: 0.9rem;
   color: #b3b3b3;
+}
+
+.event-details strong {
+  color: #FFFFFF;
 }
 
 .event-details p {

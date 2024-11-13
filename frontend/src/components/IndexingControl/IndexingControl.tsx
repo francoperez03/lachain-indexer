@@ -6,6 +6,8 @@ import { previewLogs } from "../../services/contractService";
 import "./IndexingControl.css";
 import Loader from "../ui/loader";
 import { useNavigate } from "react-router-dom";
+import IndexingButton from "../IndexingButton/IndexingButton";
+import ConfirmDeleteModal from "../ConfirmDeleteModal/ConfirmDeleteModal";
 interface IndexingControlProps {
   contract: Contract;
   onStartIndexing: (address: string, startBlock: bigint) => Promise<void>;
@@ -31,8 +33,17 @@ const IndexingControl: React.FC<IndexingControlProps> = ({
   const [loadingLogs, setLoadingLogs] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<"idle" | "deleting" | "deleted">(
     "idle"
-  ); // Nuevo estado con tres valores
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   const calculateCreationTime = () => {
     const createdAt = new Date(contract.createdAt);
@@ -95,14 +106,14 @@ const IndexingControl: React.FC<IndexingControlProps> = ({
       setLoadingLogs(false);
     }
   };
-
-  const handleDelete = async () => {
-    setDeleting("deleting"); // Cambia el estado a "Eliminando..."
+  const handleConfirmDelete = async () => {
+    handleCloseModal();
+    setDeleting("deleting");
     await onDelete();
-    setDeleting("deleted"); // Cambia el estado a "Eliminado!"
+    setDeleting("deleted");
     setTimeout(() => {
       navigate("/contracts");
-    }, 1000); // Espera 1 segundo antes de navegar
+    }, 1000);
   };
 
   return (
@@ -134,29 +145,26 @@ const IndexingControl: React.FC<IndexingControlProps> = ({
           </p>
         )}
         <div className="button-group">
-          {contract.status && (
-            <button
-              onClick={handleStartIndexing}
-              className="indexing-button"
-              disabled={indexingLoading}
-              style={{
-                background: `linear-gradient(to right, #51FF00 ${percentage}%, #0C0C0B ${percentage}%)`,
-              }}
-            >
-              {indexingLoading ? "Indexando..." : "Comenzar a Indexar"}
-            </button>
-          )}
+          <IndexingButton
+            onClick={handleStartIndexing}
+            loading={indexingLoading}
+            percentage={percentage}
+            status={contract.status}
+          />
           <button
-            onClick={handleDelete}
+            onClick={handleOpenModal}
             className="delete-button"
-            disabled={deleting !== "idle"}
+            disabled={deleting !== 'idle'}
           >
-            {deleting === "deleting"
-              ? "Eliminando..."
-              : deleting === "deleted"
-              ? "Eliminado!"
-              : "Eliminar Contrato"}
+            {deleting === 'deleting' ? 'Eliminando...' : deleting === 'deleted' ? 'Eliminado!' : 'Eliminar Contrato'}
           </button>
+
+          {isModalOpen && (
+            <ConfirmDeleteModal
+              onClose={handleCloseModal}
+              onConfirm={handleConfirmDelete}
+            />
+          )}
         </div>
         <div className="contract-info">
           <span>{contract.eventLogCount} eventos</span> |

@@ -1,0 +1,85 @@
+/* ConfirmDeleteModal.css */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro semitransparente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #0C0C0B;
+  border: 1px solid #51FF00;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 400px;
+  width: 90%;
+  color: #FFFFFF;
+  font-family: 'Orbitron', sans-serif;
+  position: relative;
+  text-align: center;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #51FF00;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+h2 {
+  color: #51FF00;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #FFFFFF;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.confirm-button,
+.cancel-button {
+  font-family: 'Orbitron', sans-serif;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+  border: none;
+}
+
+.confirm-button {
+  background-color: red;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #ff4d4d;
+}
+
+.cancel-button {
+  background-color: #51FF00;
+  color: #0C0C0B;
+}
+
+.cancel-button:hover {
+  background-color: #3bbf00;
+}

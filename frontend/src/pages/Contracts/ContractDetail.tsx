@@ -9,7 +9,7 @@ import { Contract } from "../../types/contract";
 import ContractTabs from "./ContractTabs";
 import ContractHeader from "../../components/ContractHeader/ContractHeader";
 import IndexingControl from "../../components/IndexingControl/IndexingControl";
-import webSocketService from "../../services/websocketService";
+import webSocketService, { websocketMessage } from "../../services/websocketService";
 
 const ContractDetail: React.FC = () => {
   const { address } = useParams<{ address: string }>();
@@ -19,9 +19,9 @@ const ContractDetail: React.FC = () => {
   const [percentage, setPercentage] = useState<number>(0);
 
   useEffect(() => {
-    const handleMessage = (data: { percentage: number }) => {
-      console.log("Mensaje recibido desde WebSocket:", data);
-      setPercentage(data.percentage);
+    const handleMessage = (message: websocketMessage) => {
+      console.log("Mensaje recibido desde WebSocket:", message);
+      setPercentage(message.data.percentage);
     };
 
     webSocketService.connect(handleMessage);

@@ -182,21 +182,14 @@ export class ContractService {
     try {
       const contract = await this.contractRepository.findOne({
         where: { address },
-        relations: [
-          'transactions',
-          'events',
-          'events.eventLogs',
-          'events.eventLogs.eventParameters',
-          'processes',
-        ],
       });
       if (!contract) {
         throw new NotFoundException('Contract not found');
       }
-      console.log('Deleting contract: ', contract.address);
-      await this.contractRepository.remove(contract);
+
+      await this.contractRepository.delete({ id: contract.id });
     } catch (error) {
-      console.error('Error deleting contract:', error);
+      console.error('Error delet  ing contract:', error);
       throw new Error('Failed to delete contract. Please try again later.');
     }
   }

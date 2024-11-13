@@ -1,5 +1,10 @@
 
-interface websocketData { percentage: number }
+export interface websocketMessage { 
+  event: string;
+  data:{
+    percentage: number;
+  }
+}
 
 class WebSocketService {
   private socket: WebSocket | null = null;
@@ -10,7 +15,7 @@ class WebSocketService {
     this.url = url;
   }
 
-  connect(onMessage: (data: websocketData) => void) {
+  connect(onMessage: (data: websocketMessage) => void) {
     this.socket = new WebSocket(this.url);
 
     this.socket.onopen = () => {
@@ -50,14 +55,14 @@ class WebSocketService {
     }
   }
 
-  private reconnect(onMessage: (data: websocketData) => void) {
+  private reconnect(onMessage: (data: websocketMessage) => void) {
     setTimeout(() => {
       console.log('Attempting to reconnect WebSocket...');
       this.connect(onMessage);
     }, 3000);
   }
 
-  sendMessage(message: websocketData) {
+  sendMessage(message: websocketMessage) {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
     }

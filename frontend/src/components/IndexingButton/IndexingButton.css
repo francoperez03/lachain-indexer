@@ -1,0 +1,23 @@
+.indexing-button {
+  color: #51ff00;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border: 1px solid #51ff00;
+  padding: 8px 16px;
+  border-radius: 0;
+  background-color: #0c0c0b;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  width: 200px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.indexing-button.active {
+  color: #0c0c0b; 
+}
+
+.indexing-button.fade-out {
+  background-color: #0c0c0b;
+  color: #51ff00;
+}

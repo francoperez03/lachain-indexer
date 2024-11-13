@@ -66,7 +66,7 @@ export class Transaction {
   data: string;
 
   @Field()
-  @Column({ type: 'bigint' })
+  @Column({ type: 'numeric', precision: 25, scale: 0, nullable: true })
   value: string;
 
   @Field()
