@@ -3,6 +3,7 @@ import { Contract } from '../contracts/contract.entity';
 import { Event } from '../events/event.entity';
 import { EventLog } from '../events/event-log.entity';
 import { EventParameter } from '../events/event-parameter.entity';
+import { EventLogParameter } from '../events/event-log-parameter.entity';
 import { Transaction } from '../transactions/transaction.entity';
 
 export async function seedEvents(
@@ -13,6 +14,8 @@ export async function seedEvents(
   const eventRepository = dataSource.getRepository(Event);
   const eventLogRepository = dataSource.getRepository(EventLog);
   const eventParameterRepository = dataSource.getRepository(EventParameter);
+  const eventLogParameterRepository =
+    dataSource.getRepository(EventLogParameter);
 
   const eventsData = [
     {
@@ -22,8 +25,6 @@ export async function seedEvents(
           { name: 'cToken', type: 'address' },
           { name: 'account', type: 'address' },
         ],
-        name: 'MarketExited',
-        anonymous: false,
       },
       name: 'MarketExited',
       signature: 'MarketExited(address,address)',
@@ -41,12 +42,14 @@ export async function seedEvents(
   ];
 
   for (const eventData of eventsData) {
+    // Encontrar el contrato asociado
     const contract = contracts.find(
       (c) => c.address.toLowerCase() === eventData.address.toLowerCase(),
     );
+
     let event = await eventRepository.findOne({
       where: { name: eventData.name, contract: { id: contract.id } },
-      relations: ['contract'],
+      relations: ['contract', 'eventParameters'],
     });
 
     if (!event) {
@@ -54,7 +57,19 @@ export async function seedEvents(
         name: eventData.name,
         signature: eventData.signature,
         contract: contract,
+        eventParameters: [],
       });
+
+      // Crear EventParameters desde los inputs del fragmento
+      for (const input of eventData.fragment.inputs) {
+        const eventParameter = eventParameterRepository.create({
+          name: input.name,
+          type: input.type,
+          event: event,
+        });
+        event.eventParameters.push(eventParameter);
+      }
+
       await eventRepository.save(event);
     }
 
@@ -65,17 +80,24 @@ export async function seedEvents(
     });
     await eventLogRepository.save(eventLog);
 
+    // Crear los EventLogParameters
     for (let i = 0; i < eventData.args.length; i++) {
-      const paramData = eventData.fragment.inputs[i];
       const paramValue = eventData.args[i];
+      const paramName = eventData.fragment.inputs[i].name;
 
-      const eventParameter = eventParameterRepository.create({
-        eventLog: eventLog,
-        name: paramData.name,
-        type: paramData.type,
-        value: paramValue,
-      });
-      await eventParameterRepository.save(eventParameter);
+      // Buscar el EventParameter asociado por nombre
+      const eventParameter = event.eventParameters.find(
+        (param) => param.name === paramName,
+      );
+
+      if (eventParameter) {
+        const eventLogParameter = eventLogParameterRepository.create({
+          value: paramValue.toString(),
+          eventLog: eventLog,
+          eventParameter: eventParameter,
+        });
+        await eventLogParameterRepository.save(eventLogParameter);
+      }
     }
   }
 

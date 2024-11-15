@@ -6,15 +6,24 @@ type EventParameter {
   id: Int!
   name: String!
   type: String!
-  value: String!
+  parameterIndex: Int!
   createdAt: DateTime!
-  eventLog: EventLog!
+  event: Event!
+  eventLogParameters: [EventLogParameter!]
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type EventLogParameter {
+  id: Int!
+  value: String!
+  createdAt: DateTime!
+  eventParameter: EventParameter!
+  eventLog: EventLog!
+}
 
 type EventLog {
   id: Int!
@@ -26,7 +35,7 @@ type EventLog {
   createdAt: DateTime!
   event: Event!
   transaction: Transaction!
-  eventParameters: [EventParameter!]
+  eventLogParameters: [EventLogParameter!]
 }
 
 type Transaction {
@@ -81,6 +90,7 @@ type Event {
   createdAt: DateTime!
   contract: Contract!
   eventLogs: [EventLog!]
+  eventParameters: [EventParameter!]
 }
 
 type Query {

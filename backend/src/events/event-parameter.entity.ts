@@ -1,12 +1,15 @@
+// event-parameter.entity.ts
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import {
-  Column,
   Entity,
   PrimaryGeneratedColumn,
+  Column,
   ManyToOne,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
-import { EventLog } from './event-log.entity';
+import { Event } from './event.entity';
+import { EventLogParameter } from './event-log-parameter.entity';
 
 @ObjectType()
 @Entity('event_parameters')
@@ -20,20 +23,28 @@ export class EventParameter {
   name: string;
 
   @Field()
-  @Column({ length: 50, nullable: true })
+  @Column({ length: 50 })
   type: string;
 
-  @Field()
-  @Column('text')
-  value: string;
+  @Field(() => Int)
+  @Column({ nullable: true })
+  parameterIndex: number;
 
   @Field()
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field(() => EventLog)
-  @ManyToOne(() => EventLog, (eventLog) => eventLog.eventParameters, {
+  @Field(() => Event)
+  @ManyToOne(() => Event, (event) => event.eventParameters, {
     onDelete: 'CASCADE',
   })
-  eventLog: EventLog;
+  event: Event;
+
+  @Field(() => [EventLogParameter], { nullable: true })
+  @OneToMany(
+    () => EventLogParameter,
+    (eventLogParameter) => eventLogParameter.eventParameter,
+    { cascade: true, onDelete: 'CASCADE' },
+  )
+  eventLogParameters: EventLogParameter[];
 }

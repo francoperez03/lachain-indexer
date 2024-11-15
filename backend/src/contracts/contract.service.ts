@@ -212,9 +212,7 @@ export class ContractService {
 
     for (const item of abi) {
       if (item.type === 'event') {
-        const inputs = item.inputs.map((input) => input.type).join(',');
-        const signature = `${item.name}(${inputs})`;
-        await this.eventService.createEvent(item.name, signature, contract);
+        await this.eventService.createEvent(item.name, item.inputs, contract);
       }
     }
     return contract;

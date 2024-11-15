@@ -8,8 +8,8 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Transaction } from '../transactions/transaction.entity';
-import { EventParameter } from './event-parameter.entity';
 import { Event } from './event.entity';
+import { EventLogParameter } from './event-log-parameter.entity';
 
 @ObjectType()
 @Entity('event_logs')
@@ -52,11 +52,11 @@ export class EventLog {
   })
   transaction: Transaction;
 
-  @Field(() => [EventParameter], { nullable: true })
+  @Field(() => [EventLogParameter], { nullable: true })
   @OneToMany(
-    () => EventParameter,
-    (eventParameter) => eventParameter.eventLog,
+    () => EventLogParameter,
+    (eventLogParameter) => eventLogParameter.eventLog,
     { cascade: true, onDelete: 'CASCADE' },
   )
-  eventParameters: EventParameter[];
+  eventLogParameters: EventLogParameter[];
 }

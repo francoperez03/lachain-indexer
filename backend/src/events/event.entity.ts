@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Contract } from '../contracts/contract.entity';
 import { EventLog } from './event-log.entity';
+import { EventParameter } from './event-parameter.entity';
 
 @ObjectType()
 @Entity('events')
@@ -41,4 +42,11 @@ export class Event {
     onDelete: 'CASCADE',
   })
   eventLogs: EventLog[];
+
+  @Field(() => [EventParameter], { nullable: true })
+  @OneToMany(() => EventParameter, (eventParameter) => eventParameter.event, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  eventParameters: EventParameter[];
 }

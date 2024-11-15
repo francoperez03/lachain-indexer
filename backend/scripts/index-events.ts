@@ -11,6 +11,7 @@ import { Transaction } from '../src/transactions/transaction.entity';
 import { uxdAbi } from '../abis/uxd.abi';
 import { EventParameter } from '../src/events/event-parameter.entity';
 import { EventLog } from '../src/events/event-log.entity';
+import { EventLogParameter } from 'src/events/event-log-parameter.entity';
 
 const CONTRACT_ADDRESS = '0xDe09E74d4888Bc4e65F589e8c13Bce9F71DdF4c7';
 const ABI = uxdAbi;
@@ -25,12 +26,15 @@ async function run() {
   const eventRepository = dataSource.getRepository(Event);
   const eventLogRepository = dataSource.getRepository(EventLog);
   const eventParameterRepository = dataSource.getRepository(EventParameter);
+  const eventLogParameterRepository =
+    dataSource.getRepository(EventLogParameter);
   const transactionRepository = dataSource.getRepository(Transaction);
 
   const eventService = new EventService(
     eventRepository,
     eventLogRepository,
     eventParameterRepository,
+    eventLogParameterRepository,
   );
   const transactionService = new TransactionService(transactionRepository);
   const blockchainService = new BlockchainService(

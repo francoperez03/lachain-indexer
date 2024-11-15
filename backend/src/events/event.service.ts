@@ -9,7 +9,7 @@ import { Contract } from '../contracts/contract.entity';
 import { Transaction } from '../transactions/transaction.entity';
 import { ethers, LogDescription } from 'ethers';
 import { EventLogFilter } from './event-log.resolver';
-
+import { EventLogParameter } from './event-log-parameter.entity';
 @Injectable()
 export class EventService {
   constructor(
@@ -21,21 +21,40 @@ export class EventService {
 
     @InjectRepository(EventParameter)
     private eventParameterRepository: Repository<EventParameter>,
+
+    @InjectRepository(EventLogParameter)
+    private eventLogParameterRepository: Repository<EventLogParameter>,
   ) {}
 
-  async createEvent(name: string, signature: string, contract: Contract) {
+  async createEvent(name: string, inputs: any[], contract: Contract) {
+    const inputsConcatenated = inputs.map((input) => input.type).join(',');
+    const signature = `${name}(${inputsConcatenated})`;
+
     let event = await this.eventRepository.findOne({
       where: {
         name,
         signature,
         contract: { id: contract.id },
       },
-      relations: ['contract'],
+      relations: ['contract', 'eventParameters'],
     });
 
     if (!event) {
       event = this.eventRepository.create({ name, signature, contract });
+      event.eventParameters = [];
       await this.eventRepository.save(event);
+
+      const eventParameters = inputs.map((input, index) =>
+        this.eventParameterRepository.create({
+          name: input.name,
+          type: input.type,
+          parameterIndex: index,
+          event: event,
+        }),
+      );
+      await this.eventRepository.save(event);
+      await this.eventParameterRepository.save(eventParameters);
+      event.eventParameters = eventParameters;
     }
 
     return event;
@@ -45,6 +64,7 @@ export class EventService {
     return this.eventRepository
       .createQueryBuilder('event')
       .leftJoinAndSelect('event.contract', 'contract')
+      .leftJoinAndSelect('event.eventParameters', 'eventParameters')
       .where('contract.address = :contractAddress', { contractAddress })
       .getMany();
   }
@@ -85,6 +105,7 @@ export class EventService {
         logIndex: log.index,
       },
     });
+
     if (!eventLog) {
       eventLog = this.eventLogRepository.create({
         blockNumber: log.blockNumber,
@@ -97,41 +118,28 @@ export class EventService {
       });
       await this.eventLogRepository.save(eventLog);
     }
-    const existingParameters = await this.eventParameterRepository
-      .createQueryBuilder('eventParameter')
-      .innerJoin('eventParameter.eventLog', 'eventLog')
-      .where('eventLog.id = :eventLogId', { eventLogId: eventLog.id })
-      .getMany();
-    const existingParameterNames = new Set(
-      existingParameters.map((p) => p.name),
-    );
-    const parameters = [];
+    console.log(eventData.args);
+    const eventLogParameters = [];
     for (const [key, value] of Object.entries(eventData.args)) {
-      if (!existingParameterNames.has(key)) {
-        const type =
-          eventData.fragment.inputs.find((input) => input.name === key)?.type ||
-          '';
-        const eventParameter = this.eventParameterRepository.create({
-          name: key,
-          type,
+      const eventParameter = event.eventParameters.find(
+        (param) => param.parameterIndex === parseInt(key),
+      );
+
+      if (eventParameter) {
+        const eventLogParameter = this.eventLogParameterRepository.create({
           value: value.toString(),
           eventLog: eventLog,
+          eventParameter: eventParameter,
         });
-        parameters.push(eventParameter);
+        eventLogParameters.push(eventLogParameter);
       }
     }
-    if (parameters.length > 0) {
-      await this.eventParameterRepository.save(parameters);
-    }
-    return eventLog;
-  }
 
-  async createEventParameter(
-    eventParameterData: Partial<EventParameter>,
-  ): Promise<EventParameter> {
-    const eventParameter =
-      this.eventParameterRepository.create(eventParameterData);
-    return this.eventParameterRepository.save(eventParameter);
+    if (eventLogParameters.length > 0) {
+      await this.eventLogParameterRepository.save(eventLogParameters);
+    }
+
+    return eventLog;
   }
 
   findAll() {
@@ -179,14 +187,15 @@ export class EventService {
     const [eventLogs, total] = await this.eventLogRepository
       .createQueryBuilder('eventLog')
       .leftJoinAndSelect('eventLog.event', 'event')
-      .leftJoinAndSelect('eventLog.eventParameters', 'eventParameter')
+      .leftJoinAndSelect('eventLog.eventLogParameters', 'eventLogParameter')
+      .leftJoinAndSelect('eventLogParameter.eventParameter', 'eventParameter')
       .innerJoin('event.contract', 'contract', 'contract.address = :address', {
         address,
       })
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
-
+    console.log(eventLogs[0].eventLogParameters);
     const formattedEventLogs = eventLogs.map((eventLog) => ({
       eventid: eventLog.event.id,
       eventName: eventLog.event.name,
@@ -196,9 +205,9 @@ export class EventService {
       logIndex: eventLog.logIndex,
       transactionHash: eventLog.transactionHash,
       createdAt: eventLog.createdAt,
-      parameters: eventLog.eventParameters.map((param) => ({
+      parameters: eventLog.eventLogParameters.map((param) => ({
         id: param.id,
-        name: param.name,
+        name: param.eventParameter.name,
         value: param.value,
         createdAt: param.createdAt,
       })),
