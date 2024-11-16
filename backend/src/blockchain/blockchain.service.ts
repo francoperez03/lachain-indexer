@@ -10,13 +10,14 @@ const MAINNET_RPC_URL = 'https://rpc1.mainnet.lachain.network';
 @Injectable()
 export class BlockchainService {
   private provider: ethers.JsonRpcProvider;
-
+  private lastBlockTimestamp: number | null = null;
   constructor(
     private readonly eventService: EventService,
     private readonly transactionService: TransactionService,
   ) {
     this.provider = new ethers.JsonRpcProvider(MAINNET_RPC_URL);
   }
+
   async startIndexingContractEvents(
     contractEntity: Contract,
     startBlock: bigint,
