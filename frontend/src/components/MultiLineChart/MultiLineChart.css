@@ -1,0 +1,61 @@
+:root {
+  --card: 200 10% 0%;
+
+  --desktop-line-color: #FFFFFF;
+  --mobile-line-color: #00FF00;
+}
+
+/* Estilos del contenedor */
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.card-container {
+  width: 30rem;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  color: #51ff00;
+  font-weight: bold;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: #b3b3b3;
+}
+
+/* Gráfico */
+.line-chart {
+  margin: 0 auto;
+}
+
+.axis-line {
+  stroke: #b3b3b3;
+}
+
+/* Footer */
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-stat {
+  font-size: 0.9rem;
+  color: #51ff00;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.footer-description {
+  font-size: 0.8rem;
+  color: #b3b3b3;
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+  color: #51ff00;
+}

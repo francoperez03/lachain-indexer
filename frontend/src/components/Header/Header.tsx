@@ -17,14 +17,20 @@ export default function Header() {
         
         {/* Links de navegación en el centro */}
         <div className="nav-links">
-        <a
-          href="https://github.com/francoperez03/lachain-indexer"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="github-link"
-        >
-          <Github className="icon" />
-        </a>
+          <a
+            href="https://github.com/francoperez03/lachain-indexer"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="github-link"
+          >
+            <Github className="icon" />
+          </a>
+          <Link
+          to="/dashboard"
+          className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+          >
+            <span>DASHBOARD</span>
+          </Link>
           <Link
             to="/contracts"
             className={`nav-link ${location.pathname === '/contracts' ? 'active' : ''}`}
