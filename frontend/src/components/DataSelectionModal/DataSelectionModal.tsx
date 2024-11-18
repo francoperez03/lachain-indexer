@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./DataSelectionModal.css";
 import { getContracts } from "@/services/contractService";
 import { ContractItem } from "@/types/contract";
-
+import { ScrollArea } from "@/components/ui/scroll-area"
+import './DataSelectionModal.css'
 interface DataSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -67,25 +68,27 @@ const DataSelectionModal: React.FC<DataSelectionModalProps> = ({
           ))}
         </div>
         {selectedContract && (
-          <div className="events-list">
+          <div className="events-modal-list">
             <h4>Eventos:</h4>
-            {selectedContract.events.map((event) => {
-              const isSelected = selectedData.some(
-                (data) =>
-                  data.contract.address === selectedContract.address &&
-                  data.event === event.name
-              );
+            <ScrollArea className="events-scroll-area">
+              {selectedContract.events.map((event) => {
+                const isSelected = selectedData.some(
+                  (data) =>
+                    data.contract.address === selectedContract.address &&
+                    data.event === event.name
+                );
 
-              return (
-                <button
-                  key={event.id}
-                  onClick={() => handleEventToggle(event.name)}
-                  className={`event-button ${isSelected ? "selected" : ""}`}
-                >
-                  {event.name}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={event.id}
+                    onClick={() => handleEventToggle(event.name)}
+                    className={`event-button ${isSelected ? "selected" : ""}`}
+                  >
+                    {event.name}
+                  </button>
+                );
+              })}
+            </ScrollArea>
           </div>
         )}
       </div>

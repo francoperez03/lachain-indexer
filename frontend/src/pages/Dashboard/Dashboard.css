@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  color: #51FF00;
+  color: #51ff00;
 }
 
 .data-controls {
@@ -14,8 +14,8 @@
 }
 
 .add-data-button {
-  background-color: #51FF00;
-  color: #0C0C0B;
+  background-color: #51ff00;
+  color: #0c0c0b;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -23,22 +23,35 @@
   font-family: "Orbitron", sans-serif;
 }
 
+.selected-data-scroll {
+  max-width: 600px; /* Limitar el ancho del scroll */
+  max-height: 100px; /* Opcional: limitar la altura */
+  overflow-x: auto; /* Activar scroll horizontal */
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+}
+
 .selected-data-list {
   display: flex;
-  flex-wrap: wrap;
   gap: 16px;
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .data-item {
   display: flex;
   align-items: center;
+  min-width: 120px;
+  max-width: 200px;
+  flex-shrink: 0;
+  text-align: center;
 }
 
 .data-box {
-  background-color: #0C0C0B;
-  border: 1px solid #0C0C0B;
+  background-color: #0c0c0b;
+  border: 1px solid #0c0c0b;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
@@ -51,65 +64,12 @@
 
 .data-item.enabled .data-box {
   background-color: #51ff0033;
-  color: #51FF00;
+  color: #51ff00;
   border-color: #51ff0033;
   border-radius: 0px;
 }
 
-.selected-data-list li {
-  display: flex;
-  align-items: center;
-  background: #0C0C0B;
-  color: #51FF00;
-  border-radius: 8px;
-}
-
-.fixed-carousel {
-  width: 100%;
-  max-width: 600px; /* Tamaño fijo del carrusel */
-  overflow: hidden; /* Para evitar scroll horizontal */
-  display: flex; /* Mantener la alineación de los elementos */
-  justify-content: center; /* Centrar los elementos si hay menos de 4 */
-  align-items: center;
-  position: relative;
-}
-
-.carousel-content {
-  display: flex;
-  gap: 16px; /* Espaciado entre los elementos */
-  width: 100%; /* Asegura que se ajuste al tamaño disponible */
-  transition: transform 0.3s ease-in-out; /* Para el deslizamiento suave */
-  justify-content: space-evenly; /* Espaciado uniforme entre elementos */
-}
-
-.carousel-content > .data-item {
-  flex: 0 0 calc(25% - 16px); /* 25% del contenedor menos el espaciado */
-  max-width: calc(25% - 16px); /* Garantiza que 4 elementos entren en el contenedor */
-  min-width: 100px; /* Tamaño mínimo para elementos pequeños */
-  box-sizing: border-box;
-  cursor: pointer;
-  text-align: center;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.carousel-content > .data-item:nth-child(1) {
-  margin-left: auto; /* Si hay menos de 4, alinear desde el centro */
-}
-
-.carousel-content > .data-item:nth-last-child(1) {
-  margin-right: auto; /* Asegurar alineación */
-}
-
-.data-item.enabled {
-  background-color: #28a745;
-  color: white;
-  border-color: #218838;
-}
-
 .data-box-enabled {
   background-color: #28a745;
-
   font-weight: bold;
 }

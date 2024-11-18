@@ -213,7 +213,7 @@ export class ContractService {
   }
 
   async startIndexing(createContractDto: IndexContractEventsDto) {
-    const PAGE_SIZE = 500_000n;
+    const PAGE_SIZE = 50_000n;
     const { address, startBlock } = createContractDto;
     try {
       const contract = await this.contractRepository.findOne({

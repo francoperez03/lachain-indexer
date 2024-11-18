@@ -16,31 +16,47 @@
   padding: 20px;
   border-radius: 8px;
   width: 500px;
+  max-height: 80%;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .close-button {
   background: none;
   border: none;
-  color: red;
+  color: #51FF00;
   font-size: 20px;
   float: right;
   cursor: pointer;
 }
 
+.contracts-list,
+.events-list {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .contracts-list button,
 .events-list button {
-  background: #51FF00;
-  color: #0C0C0B;
+  background: #0C0C0B;
+  color: #51FF00;
   border: none;
   padding: 10px 15px;
   margin: 5px;
   cursor: pointer;
   border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .contracts-list button:hover,
 .events-list button:hover {
-  background: #3BBF00;
+  background: #51ff0033;
+  color: #51FF00;
+
 }
 
 .contract-button {
@@ -53,23 +69,36 @@
 }
 
 .contract-button.selected {
-  background-color: #007bff;
-  color: white;
-  border-color: #0056b3;
+  background-color: #51FF00;
+  color: #0C0C0B;
+}
+
+.events-modal-list {
+  margin-top: 16px;
+  max-height: 300px; /* Altura máxima de la lista de eventos */
+  overflow-y: auto; /* Habilitar scroll vertical */
+  border: 1px solid #51FF00;
+  padding: 10px;
+  background-color: #1A1A1A;
+  border-radius: 4px;
 }
 
 .event-button {
-  margin: 4px;
   padding: 8px;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
+  border: 1px solid #51FF00;
+  background-color: #0C0C0B;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  display: block; 
+  width: 100%;
 }
 
 .event-button.selected {
-  background-color: #28a745;
+  background-color: #51ff0033;
   color: white;
-  border-color: #218838;
+}
+
+.event-button:hover {
+  background-color: rgba(81, 255, 0, 0.2);
 }
 

@@ -3,7 +3,7 @@ import { Contract } from '../../types/contract';
 import './AbiAndEventsTab.css';
 import JsonView from '@uiw/react-json-view';
 import { githubDarkTheme } from '@uiw/react-json-view/githubDark';
-
+import './AbiAndEventsTab.css'
 interface AbiAndEventsTabProps {
   contract: Contract;
 }
