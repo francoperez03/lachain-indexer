@@ -1,0 +1,75 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #0C0C0B;
+  color: #FFFFFF;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 20px;
+  float: right;
+  cursor: pointer;
+}
+
+.contracts-list button,
+.events-list button {
+  background: #51FF00;
+  color: #0C0C0B;
+  border: none;
+  padding: 10px 15px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.contracts-list button:hover,
+.events-list button:hover {
+  background: #3BBF00;
+}
+
+.contract-button {
+  margin: 4px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.contract-button.selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+.event-button {
+  margin: 4px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.event-button.selected {
+  background-color: #28a745;
+  color: white;
+  border-color: #218838;
+}
+

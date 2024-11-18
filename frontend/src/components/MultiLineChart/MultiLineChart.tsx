@@ -12,42 +12,24 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import "./MultiLineChart.css"
+import { ChartDataItem } from "@/types/analytics"
 
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-]
 
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "desktop-line",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "mobile-line",
-  },
-} satisfies ChartConfig
 
-export default function Component() {
+interface MultiLineChartProps {
+  chartConfig: Record<string, { label: string; color: string }>;
+  chartData: ChartDataItem[]
+}
+
+
+const MultiLineChart: React.FC<MultiLineChartProps> = ({ chartData, chartConfig }) => {
+  console.log({chartConfig})
+  console.log({chartData})
   return (
     <Card className="card-container">
       <CardHeader>
@@ -66,27 +48,26 @@ export default function Component() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="blockNumber"
               axisLine={{ stroke: "#FFFFFF" }}
               tick={{stroke: 'white'}} 
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)} 
+              tickFormatter={(value) => String(value).slice(0, 6)}
             />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Line
-              dataKey="desktop"
-              type="monotone"
-              stroke="var(--desktop-line-color)"
-              strokeWidth={2}
-              dot={false}
+            <ChartTooltip 
+              cursor={false}
+              content={<ChartTooltipContent hideLabel={true} />}
             />
-            <Line
-              dataKey="mobile"
-              type="monotone"
-              stroke="var(--mobile-line-color)"
-              strokeWidth={2}
-              dot={false}
-            />
+            {Object.keys(chartConfig).map((key) => (
+              <Line
+                key={key}
+                dataKey={key}
+                type="monotone"
+                stroke={chartConfig[key].color}
+                strokeWidth={2}
+                dot={false}
+              />
+            ))}
           </LineChart>
         </ChartContainer>
       </CardContent>
@@ -103,3 +84,5 @@ export default function Component() {
     </Card>
   )
 }
+
+export default MultiLineChart;

@@ -2,7 +2,7 @@
 
 .app-header {
   width: 100%;
-  background-color: #0C0C0B; /* Fondo negro */
+  background-color: #0C0C0B;
   position: fixed;
   top: 0;
   left: 0;
@@ -62,7 +62,7 @@
 }
 
 .nav-link.active {
-  background-color: rgba(81, 255, 0, 0.2); /* Fondo para la ruta activa */
+  background-color: #51ff0033;
   color: #51FF00;
 }
 

@@ -38,19 +38,16 @@ export class ContractService {
     // });
     // for (const process of processes) {
     //   const contract = process.contract;
-
     //   if (!contract.abi) {
     //     console.warn(`The contract ${contract.address} doesn't have ABI.`);
     //     continue;
     //   }
-
     //   if (!process.startBlock) {
     //     console.warn(
     //       `The contract ${contract.address} doesn't define a startBlock.`,
     //     );
     //     continue;
     //   }
-
     //   this.blockchainService.startListeningToContractEvents(
     //     contract,
     //     async () => {
@@ -84,21 +81,19 @@ export class ContractService {
   async findAll() {
     const contracts: any = await this.contractRepository
       .createQueryBuilder('contract')
-      .loadRelationCountAndMap('contract.eventsCount', 'contract.events')
+      .leftJoinAndSelect('contract.events', 'event')
       .loadRelationCountAndMap(
         'contract.transactionsCount',
         'contract.transactions',
-      )
-      .loadRelationCountAndMap(
-        'contract.eventLogsCount',
-        'contract.events.eventLogs',
-        'eventLogs',
       )
       .select([
         'contract.id',
         'contract.address',
         'contract.name',
         'contract.createdAt',
+        'event.id',
+        'event.name',
+        'event.signature',
       ])
       .getMany();
 
@@ -119,7 +114,6 @@ export class ContractService {
     contracts.forEach((contract) => {
       contract.eventLogsCount = countsMap[contract.id] || 0;
     });
-
     return contracts;
   }
 

@@ -50,7 +50,6 @@ export class AnalyticsService {
       .orderBy('tick', 'ASC')
       .getRawMany();
 
-    // Crear todos los intervalos
     const totalIntervals = Math.ceil((endBlock - startBlock + 1) / tickSize);
     const intervals = Array.from({ length: totalIntervals }, (_, i) => ({
       blockRangeStart: startBlock + i * tickSize,
@@ -58,12 +57,15 @@ export class AnalyticsService {
       count: 0,
     }));
 
-    // Rellenar los intervalos con los datos obtenidos
     for (const row of result) {
       const index = Number(row.tick);
       intervals[index].count = parseInt(row.count, 10);
     }
 
-    return intervals;
+    return {
+      contractAddress,
+      eventName,
+      data: intervals,
+    };
   }
 }

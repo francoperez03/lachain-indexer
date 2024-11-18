@@ -36,7 +36,7 @@ export interface ContractItem {
   createdAt: string;
   name: string;
   eventLogsCount: number;
-  eventsCount: number;
+  events: Event[];
   transactionsCount: number;
   icon?: string
 }
