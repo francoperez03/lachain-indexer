@@ -223,4 +223,53 @@ export class BlockchainService {
       rpcUrl: MAINNET_RPC_URL,
     };
   }
+
+  async getContractMetadata(contractAddress: string, abi: ethers.InterfaceAbi) {
+    if (!abi) {
+      throw new Error('Contract ABI is required');
+    }
+
+    const ethersContract = new ethers.Contract(
+      contractAddress,
+      abi,
+      this.provider,
+    );
+
+    let name = null;
+    let symbol = null;
+    let decimals = null;
+    let totalSupply = null;
+
+    try {
+      name = await ethersContract.name();
+    } catch {
+      // Si no tiene función name
+    }
+
+    try {
+      symbol = await ethersContract.symbol();
+    } catch {
+      // Si no tiene función symbol
+    }
+
+    try {
+      decimals = await ethersContract.decimals();
+    } catch {
+      // Si no tiene función decimals
+    }
+
+    try {
+      totalSupply = await ethersContract.totalSupply();
+    } catch {
+      // Si no tiene función totalSupply
+    }
+
+    return {
+      address: contractAddress,
+      name,
+      symbol,
+      decimals: decimals ? decimals.toString() : null,
+      totalSupply: totalSupply ? totalSupply.toString() : null,
+    };
+  }
 }

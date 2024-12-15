@@ -33,8 +33,8 @@ const MultiLineChart: React.FC<MultiLineChartProps> = ({ chartData, chartConfig 
   return (
     <Card className="card-container">
       <CardHeader>
-        <CardTitle>Line Chart - Multiple</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle></CardTitle>
+        <CardDescription>Datos de los ultimos</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -73,12 +73,12 @@ const MultiLineChart: React.FC<MultiLineChartProps> = ({ chartData, chartConfig 
       </CardContent>
       <CardFooter>
         <div className="footer-content">
-          <div className="footer-stat">
+          {/* <div className="footer-stat">
             Trending up by 5.2% this month <TrendingUp className="icon" />
           </div>
           <div className="footer-description">
             Showing total visitors for the last 6 months
-          </div>
+          </div> */}
         </div>
       </CardFooter>
     </Card>

@@ -11,6 +11,7 @@ import { EventsModule } from './events/events.module';
 import { typeOrmConfig } from '../config/ormconfig';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ApiModule } from './api/api.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     TransactionsModule,
     EventsModule,
     AnalyticsModule,
+    ApiModule,
   ],
 })
 export class AppModule {}

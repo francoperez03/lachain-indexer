@@ -231,4 +231,67 @@ export class EventService {
       })
       .getCount();
   }
+
+  async getEventLogsWithFilters(
+    contractAddress: string,
+    filters: any,
+    page: number,
+    limit: number,
+  ) {
+    const query = this.eventLogRepository
+      .createQueryBuilder('eventLog')
+      .leftJoinAndSelect('eventLog.event', 'event')
+      .leftJoinAndSelect('eventLog.eventLogParameters', 'eventLogParameter')
+      .leftJoinAndSelect('eventLogParameter.eventParameter', 'eventParameter')
+      .innerJoin('event.contract', 'contract', 'contract.address = :address', {
+        address: contractAddress,
+      })
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    if (filters.eventName) {
+      query.andWhere('event.name = :eventName', {
+        eventName: filters.eventName,
+      });
+    }
+
+    if (filters.fromBlock) {
+      query.andWhere('eventLog.blockNumber >= :fromBlock', {
+        fromBlock: filters.fromBlock,
+      });
+    }
+
+    if (filters.toBlock) {
+      query.andWhere('eventLog.blockNumber <= :toBlock', {
+        toBlock: filters.toBlock,
+      });
+    }
+
+    const [eventLogs, total] = await query.getManyAndCount();
+
+    const formattedEventLogs = eventLogs.map((eventLog) => ({
+      eventId: eventLog.event.id,
+      eventName: eventLog.event.name,
+      signature: eventLog.event.signature,
+      id: eventLog.id,
+      blockNumber: eventLog.blockNumber,
+      logIndex: eventLog.logIndex,
+      transactionHash: eventLog.transactionHash,
+      createdAt: eventLog.createdAt,
+      parameters: eventLog.eventLogParameters.map((param) => ({
+        id: param.id,
+        name: param.eventParameter.name,
+        value: param.value,
+        createdAt: param.createdAt,
+      })),
+    }));
+
+    return {
+      data: formattedEventLogs,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }

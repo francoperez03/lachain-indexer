@@ -128,13 +128,20 @@ const IndexingControl: React.FC<IndexingControlProps> = ({
               className="indexing-input"
               disabled={indexingLoading}
             />
+          <span style={{ marginLeft: "8px",  alignItems: "center" }}>
+            {loadingLogs ? (
+              <Loader />
+            ) : logsCount !== null ? (
+              `${logsCount} eventos encontrados`
+            ) : null}
+          </span>
           </p>
         </div>
         <p className="logs-count">
           Número total de bloques actuales:{" "}
           <strong style={{ color: "#51FF00" }}>{currentBlock}</strong>
         </p>
-        {startBlock > 0 && (
+        {/* {startBlock > 0 && (
           <p className="logs-count">
             Eventos a guardar desde el bloque{" "}
             <strong style={{ color: "#51FF00" }}>
@@ -143,7 +150,7 @@ const IndexingControl: React.FC<IndexingControlProps> = ({
             : {logsCount}
             {loadingLogs && <Loader className="loader" />}
           </p>
-        )}
+        )} */}
         <div className="button-group">
           <IndexingButton
             onClick={handleStartIndexing}

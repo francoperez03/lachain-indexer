@@ -106,4 +106,52 @@ export class TransactionService {
       .where('transaction.contractId = :contractId', { contractId })
       .getCount();
   }
+
+  async getTransactionsWithFilters(
+    contractAddress: string,
+    filters: any,
+    page: number,
+    limit: number,
+  ) {
+    const query = this.transactionRepository
+      .createQueryBuilder('transaction')
+      .innerJoin('transaction.contract', 'contract')
+      .where('contract.address = :address', { address: contractAddress })
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    if (filters.fromBlock) {
+      query.andWhere('transaction.blockNumber >= :fromBlock', {
+        fromBlock: filters.fromBlock,
+      });
+    }
+
+    if (filters.toBlock) {
+      query.andWhere('transaction.blockNumber <= :toBlock', {
+        toBlock: filters.toBlock,
+      });
+    }
+
+    if (filters.fromAddress) {
+      query.andWhere('transaction.from = :fromAddress', {
+        fromAddress: filters.fromAddress,
+      });
+    }
+
+    if (filters.toAddress) {
+      query.andWhere('transaction.to = :toAddress', {
+        toAddress: filters.toAddress,
+      });
+    }
+
+    const [transactions, total] = await query.getManyAndCount();
+
+    return {
+      data: transactions,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }

@@ -1,16 +1,9 @@
 import React from 'react';
 import './loader.css';
+import {Loader as Loaderpi} from 'lucide-react'
 
-const Loader: React.FC<{ className?: string; size?: number }> = ({ className = '', size = 16 }) => (
-  <img
-    src="../../assets/images/search-icon.webp"
-    alt="."
-    className={`loader-icon ${className}`}
-    style={{
-      width: size,
-      height: size,
-    }}
-  />
+const Loader: React.FC<{ className?: string; size?: number }> = () => (
+  <Loaderpi className='loader-icon' />
 );
 
 export default Loader;

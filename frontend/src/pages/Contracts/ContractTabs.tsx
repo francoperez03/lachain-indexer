@@ -6,6 +6,7 @@ import EventLogsTab from './EventLogsTab';
 import AbiAndEventsTab from './AbiAndEventsTab';
 import TransactionsTab from './TransactionTab';
 import './ContractTabs.css';
+import RestApiTab from './RestApiTab';
 
 interface ContractTabsProps {
   contract: Contract;
@@ -32,6 +33,9 @@ const ContractTabs: React.FC<ContractTabsProps> = ({ contract }) => {
           <li className={`tab-item ${location.pathname.includes('graphql') ? 'active' : ''}`}>
             <Link to="graphql" className="tab-link">Consulta GraphQL</Link>
           </li>
+          <li className={`tab-item ${location.pathname.includes('apirest') ? 'active' : ''}`}>
+            <Link to="apirest" className="tab-link">Consulta API REST</Link>
+          </li>
           <li className={`tab-item ${location.pathname.includes('event-logs') ? 'active' : ''}`}>
             <Link to="event-logs" className="tab-link">Eventos generados</Link>
           </li>
@@ -43,6 +47,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({ contract }) => {
       <Routes>
         <Route path="abi-events" element={<AbiAndEventsTab contract={contract} />} />
         <Route path="graphql" element={<GraphQLTab contract={contract} />} />
+        <Route path="apirest" element={<RestApiTab contract={contract} />} />
         <Route path="event-logs" element={<EventLogsTab contract={contract} />} />
         <Route path="transactions" element={<TransactionsTab contract={contract} />} />
       </Routes>

@@ -8,5 +8,8 @@
 }
 
 .loader-icon {
-  animation: spin 1s linear infinite; /* Gira continuamente en 1 segundo */
+  animation: spin 1s linear infinite;
+  width: 16px;
+  margin-left: 5px;
+  display: inline-block;
 }

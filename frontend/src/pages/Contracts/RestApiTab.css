@@ -1,0 +1,133 @@
+.rest-api-tab {
+  padding: 20px;
+  background-color: #0c0c0b;
+  color: #ffffff;
+  font-family: "Orbitron", sans-serif;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.rest-api-title {
+  font-size: 1.5rem;
+  color: #51ff00;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.select-content {
+  background-color: #0c0c0b !important; 
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.select-content [role="option"] {
+  background-color: transparent;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.select-content [role="option"]:hover {
+  background-color: #1a1a1a;
+}
+
+.query-params-container {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #0C0C0B; /* Fondo oscuro para la sección de query params */
+  border: 1px solid #FFFFFF; /* Borde blanco */
+  border-radius: 8px;
+}
+
+.query-params-container h4 {
+  color: #51FF00; /* Verde para el título */
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.query-param-group {
+  display: flex;
+  align-items: center; /* Alinea verticalmente el checkbox, label e input */
+  gap: 10px; /* Espaciado entre los elementos */
+  margin-bottom: 12px; /* Espaciado inferior entre grupos */
+}
+
+.query-param-group label {
+  color: #FFFFFF; /* Texto blanco */
+  font-size: 1rem;
+  flex-shrink: 0; /* Evita que el label se reduzca */
+}
+
+.query-param-group input {
+  flex-grow: 1; /* El input ocupa el espacio restante */
+  padding: 8px;
+  font-size: 1rem;
+  color: #FFFFFF;
+  background-color: #0C0C0B;
+  border: 1px solid #FFFFFF;
+  border-radius: 4px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.query-param-group input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.query-param-group input:focus {
+  outline: none;
+  border-color: #51FF00; /* Borde verde al hacer foco */
+}
+
+.rest-api-button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #51ff00;
+  color: #0c0c0b;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.rest-api-button:hover {
+  background-color: #3bbf00;
+}
+
+.rest-api-result {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #0c0c0b;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  min-width: 650px;
+  max-width: 830px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+.query-param-group {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio entre el checkbox y el label */
+  margin-bottom: 12px;
+}
+
+.query-param-group label {
+  flex-shrink: 0; /* Evita que el label se reduzca de tamaño */
+  width: 200px; /* Anchura fija para alinear los labels */
+  text-align: left;
+}
+
+.query-param-group input[type="text"] {
+  flex-grow: 1; /* Permite que el input ocupe todo el espacio restante */
+  margin-left: 12px; /* Espacio adicional desde el label */
+}
+
